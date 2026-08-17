@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Playfair Display';
+  --font-body: 'DM Sans';
+  --font-mono: 'DM Mono';
+}
+
+/* Mastercard brand circles decoration */
+.mc-circles::before,
+.mc-circles::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+}
+.mc-circles::before {
+  background: #EB001B;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.mc-circles::after {
+  background: #F79E1B;
+  left: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  mix-blend-mode: screen;
+}
+
+/* Ink texture overlay */
+.noise-bg {
+  position: relative;
+}
+.noise-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Risk badge styles */
+.risk-critical { @apply bg-mc_red/20 text-mc_red border border-mc_red/30; }
+.risk-high     { @apply bg-orange-500/20 text-orange-400 border border-orange-500/30; }
+.risk-medium   { @apply bg-mc_amber/20 text-mc_amber border border-mc_amber/30; }
+.risk-low      { @apply bg-emerald-500/20 text-emerald-400 border border-emerald-500/30; }
+
+/* Animated scan line */
+@keyframes scanLine {
+  0%   { top: 0%; }
+  100% { top: 100%; }
+}
+
+.scan-overlay {
+  position: relative;
+  overflow: hidden;
+}
+.scan-overlay::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #EB001B88, transparent);
+  animation: scanLine 2s linear infinite;
+}
+
+/* Card glow on hover */
+.card-glow {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.card-glow:hover {
+  box-shadow: 0 0 0 1px #EB001B33, 0 8px 32px #EB001B22;
+  transform: translateY(-2px);
+}
+
+/* Metric number style */
+.metric-number {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1E1E1C; }
+::-webkit-scrollbar-thumb { background: #2A2A28; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #EB001B66; }
+
+/* Fade-up animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fadeUp 0.5s ease-out forwards; }
+.delay-100 { animation-delay: 0.1s; opacity: 0; }
+.delay-200 { animation-delay: 0.2s; opacity: 0; }
+.delay-300 { animation-delay: 0.3s; opacity: 0; }
+.delay-400 { animation-delay: 0.4s; opacity: 0; }
