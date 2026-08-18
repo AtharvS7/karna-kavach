@@ -119,8 +119,9 @@ class GenerateEngine:
     """
 
     def __init__(self):
-        self.taxonomy_path = Path("data/attack_taxonomy.json")
-        self.output_dir = Path("data/synthetic_transactions")
+        project_root = Path(__file__).parent.parent.parent
+        self.taxonomy_path = project_root / "data" / "attack_taxonomy.json"
+        self.output_dir = project_root / "data" / "synthetic_transactions"
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.output_path = self.output_dir / "transactions.csv"
 

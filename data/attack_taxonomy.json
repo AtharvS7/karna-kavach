@@ -1,0 +1,312 @@
+[
+  {
+    "attack_id": "cnp-stolen-card-testing",
+    "name": "Stolen Card BIN Testing via Automated Bots",
+    "category": "Card-Not-Present Fraud",
+    "genai_amplification": "GenAI-powered bots can generate realistic cardholder details, bypass CAPTCHAs using vision models, and create synthetic browser fingerprints that mimic legitimate users, making automated card testing nearly undetectable.",
+    "attack_steps": ["Acquire stolen card BINs from dark web marketplaces", "Deploy GenAI bot to generate matching cardholder PII", "Perform micro-transactions ($0.50-$2.00) on low-security merchants", "Identify valid cards by monitoring authorization responses", "Execute high-value purchases on validated cards within minutes"],
+    "target_channel": "e-commerce checkout pages",
+    "detection_challenges": ["Micro-transactions resemble legitimate small purchases", "GenAI-generated PII passes basic verification checks", "Distributed bot networks mask velocity patterns"],
+    "transaction_features": {"amount_range": [0.50, 2.00], "velocity_spike": true, "geographic_anomaly": false, "merchant_category": "online", "time_pattern": "rapid sequential transactions within 5-minute windows", "card_present": false}
+  },
+  {
+    "attack_id": "cnp-deepfake-identity-verification",
+    "name": "Deepfake Identity Document Bypass",
+    "category": "Card-Not-Present Fraud",
+    "genai_amplification": "GenAI image generation creates photorealistic fake IDs and selfies that pass automated KYC verification systems, enabling fraudsters to open accounts and make purchases under synthetic identities.",
+    "attack_steps": ["Generate synthetic identity documents using diffusion models", "Create matching deepfake selfie for liveness checks", "Pass automated KYC verification on payment platform", "Link stolen payment method to verified account", "Make high-value purchases before identity is flagged"],
+    "target_channel": "online payment platforms with KYC",
+    "detection_challenges": ["Deepfake quality exceeds human detection capability", "Synthetic documents pass automated OCR and template matching", "Liveness detection systems can be fooled by real-time face generation"],
+    "transaction_features": {"amount_range": [200, 5000], "velocity_spike": false, "geographic_anomaly": true, "merchant_category": "electronics", "time_pattern": "purchases concentrated within first 48 hours of account creation", "card_present": false}
+  },
+  {
+    "attack_id": "cnp-ai-generated-phishing-checkout",
+    "name": "AI-Cloned Merchant Checkout Pages",
+    "category": "Card-Not-Present Fraud",
+    "genai_amplification": "LLMs generate pixel-perfect clones of legitimate merchant checkout pages, complete with dynamic pricing, product reviews, and customer service chatbots that harvest card details in real-time.",
+    "attack_steps": ["Use LLM to scrape and clone target merchant website", "Deploy AI chatbot for customer support simulation", "Drive traffic via AI-generated social media ads", "Capture card details during fake checkout process", "Use harvested credentials for unauthorized purchases"],
+    "target_channel": "fake e-commerce storefronts",
+    "detection_challenges": ["Clone sites are visually indistinguishable from originals", "AI chatbots provide convincing customer interactions", "Short-lived domains evade blacklist detection"],
+    "transaction_features": {"amount_range": [50, 500], "velocity_spike": false, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "transactions cluster during marketing campaign windows", "card_present": false}
+  },
+  {
+    "attack_id": "cnp-subscription-fraud-llm",
+    "name": "LLM-Orchestrated Subscription Fraud",
+    "category": "Card-Not-Present Fraud",
+    "genai_amplification": "LLMs automate the creation of hundreds of subscription accounts using synthetic identities, exploiting free trial periods and low initial charges that bypass fraud detection thresholds.",
+    "attack_steps": ["Generate synthetic email addresses and phone numbers", "Use LLM to fill subscription forms with realistic data", "Exploit free trial periods across multiple services", "Upgrade to paid tiers using stolen card details", "Resell premium accounts on secondary markets"],
+    "target_channel": "digital subscription services",
+    "detection_challenges": ["Low initial amounts fall below fraud review thresholds", "Synthetic identities have no prior fraud history", "Subscription payments appear as recurring legitimate charges"],
+    "transaction_features": {"amount_range": [5, 50], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "online", "time_pattern": "recurring monthly charges with gradual amount increases", "card_present": false}
+  },
+  {
+    "attack_id": "cnp-triangulation-fraud",
+    "name": "AI-Enhanced Triangulation Fraud",
+    "category": "Card-Not-Present Fraud",
+    "genai_amplification": "GenAI manages complex multi-party fraud schemes where legitimate products are purchased with stolen cards and resold through AI-managed storefronts, creating layers of obfuscation.",
+    "attack_steps": ["Create AI-managed online storefronts with competitive pricing", "Receive legitimate customer orders and payments", "Purchase products from real merchants using stolen cards", "Ship products directly to unsuspecting customers", "Pocket legitimate payments while victims handle chargebacks"],
+    "target_channel": "marketplace platforms and drop-shipping",
+    "detection_challenges": ["Purchases appear legitimate with real shipping addresses", "Multiple parties involved obscure the fraud chain", "GenAI manages inventory and pricing dynamically"],
+    "transaction_features": {"amount_range": [30, 300], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "retail", "time_pattern": "steady transaction flow mimicking legitimate business", "card_present": false}
+  },
+  {
+    "attack_id": "cnp-virtual-card-enumeration",
+    "name": "Virtual Card Number Enumeration",
+    "category": "Card-Not-Present Fraud",
+    "genai_amplification": "GenAI models predict valid virtual card numbers by analyzing BIN patterns, expiration date distributions, and CVV algorithms, dramatically reducing the search space for brute-force attacks.",
+    "attack_steps": ["Analyze leaked BIN databases to identify valid ranges", "Use ML models to predict likely CVV and expiration combinations", "Distribute enumeration attempts across thousands of merchant endpoints", "Validate successful combinations with micro-authorizations", "Execute rapid purchases before card issuer detects pattern"],
+    "target_channel": "payment gateway APIs",
+    "detection_challenges": ["Distributed attempts avoid single-merchant velocity triggers", "AI-predicted combinations have higher hit rates than random", "Virtual cards may lack behavioral history for anomaly detection"],
+    "transaction_features": {"amount_range": [1, 10], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "high-frequency micro-transactions across many merchants", "card_present": false}
+  },
+  {
+    "attack_id": "se-deepfake-voice-authorization",
+    "name": "Deepfake Voice Authorization Fraud",
+    "category": "Social Engineering",
+    "genai_amplification": "Voice cloning AI creates real-time synthetic voices that match cardholders, enabling fraudsters to pass phone-based identity verification and authorize transactions that require voice confirmation.",
+    "attack_steps": ["Harvest target voice samples from social media or voicemail", "Train voice cloning model on 30-60 seconds of audio", "Call bank customer service impersonating the cardholder", "Pass voice biometric verification using real-time synthesis", "Authorize high-value wire transfers or card limit increases"],
+    "target_channel": "phone banking and IVR systems",
+    "detection_challenges": ["Voice clones pass commercial biometric systems with 85%+ accuracy", "Real-time synthesis handles dynamic conversation naturally", "Background noise injection masks synthetic artifacts"],
+    "transaction_features": {"amount_range": [1000, 25000], "velocity_spike": false, "geographic_anomaly": true, "merchant_category": "atm", "time_pattern": "single large withdrawal after phone authorization", "card_present": false}
+  },
+  {
+    "attack_id": "se-ai-spear-phishing",
+    "name": "LLM-Crafted Spear Phishing Campaigns",
+    "category": "Social Engineering",
+    "genai_amplification": "LLMs generate hyper-personalized phishing emails by analyzing targets' social media profiles, writing style, and professional context, achieving click rates 3-5x higher than template-based phishing.",
+    "attack_steps": ["Scrape target profiles from LinkedIn and social media", "Use LLM to generate personalized phishing content", "Create context-aware pretexts matching target's recent activities", "Deploy credential harvesting pages with AI-generated content", "Use captured credentials for account takeover and fraud"],
+    "target_channel": "email and business communication platforms",
+    "detection_challenges": ["Personalized content bypasses spam filters trained on generic phishing", "LLM-generated text lacks typical phishing markers", "Context-aware pretexts are difficult for recipients to identify as fraudulent"],
+    "transaction_features": {"amount_range": [500, 10000], "velocity_spike": false, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "transactions occur 24-48 hours after credential capture", "card_present": false}
+  },
+  {
+    "attack_id": "se-deepfake-video-call-impersonation",
+    "name": "Real-Time Deepfake Video Impersonation",
+    "category": "Social Engineering",
+    "genai_amplification": "Real-time face-swapping AI enables fraudsters to impersonate bank executives, family members, or business partners during video calls, authorizing fraudulent transactions with visual confirmation.",
+    "attack_steps": ["Collect target's facial images from social media profiles", "Train real-time face-swap model for video conferencing", "Initiate video call to bank or business partner", "Use deepfake avatar to authorize large fund transfers", "Execute transaction before verification callback is made"],
+    "target_channel": "video conferencing for transaction authorization",
+    "detection_challenges": ["Real-time deepfakes are convincing at standard video quality", "Victims trust visual confirmation over other verification methods", "Deepfake detection tools lag behind generation technology"],
+    "transaction_features": {"amount_range": [5000, 100000], "velocity_spike": false, "geographic_anomaly": true, "merchant_category": "travel", "time_pattern": "single high-value transfer during business hours", "card_present": false}
+  },
+  {
+    "attack_id": "se-ai-romance-scam",
+    "name": "AI-Persona Romance and Investment Scams",
+    "category": "Social Engineering",
+    "genai_amplification": "LLMs maintain long-term romantic or professional relationships across dating and social platforms, building trust over weeks before requesting payments or investment in fraudulent schemes.",
+    "attack_steps": ["Create synthetic dating profiles with AI-generated photos", "Use LLM to maintain convincing long-term conversations", "Build emotional trust over 2-4 week engagement period", "Introduce urgent financial need or investment opportunity", "Receive funds via gift cards, wire transfers, or cryptocurrency"],
+    "target_channel": "dating apps and social media messaging",
+    "detection_challenges": ["Long grooming period makes transactions appear voluntary", "AI-generated personas have consistent backstories and personalities", "Victims often refuse to believe they are being scammed"],
+    "transaction_features": {"amount_range": [100, 5000], "velocity_spike": false, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "escalating amounts over multi-week periods", "card_present": false}
+  },
+  {
+    "attack_id": "se-synthetic-customer-support",
+    "name": "AI-Powered Fake Customer Support",
+    "category": "Social Engineering",
+    "genai_amplification": "LLM-powered chatbots impersonate bank customer support agents, handling complex conversations to extract card details, OTPs, and security answers from unsuspecting customers.",
+    "attack_steps": ["Set up fake customer support hotlines with AI IVR", "Use SEO poisoning to make fake support numbers appear in search results", "Deploy LLM chatbot to handle inbound customer calls", "Extract card numbers, CVVs, and OTPs through conversational manipulation", "Execute fraudulent transactions using captured credentials"],
+    "target_channel": "phone and web chat support channels",
+    "detection_challenges": ["AI voices and chatbots are indistinguishable from real agents", "Customers initiate contact willingly, reducing suspicion", "SEO-poisoned results appear more trustworthy than cold calls"],
+    "transaction_features": {"amount_range": [200, 3000], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "rapid transactions immediately after credential capture", "card_present": false}
+  },
+  {
+    "attack_id": "se-ai-business-email-compromise",
+    "name": "AI-Enhanced Business Email Compromise",
+    "category": "Social Engineering",
+    "genai_amplification": "LLMs analyze corporate email patterns, writing styles, and organizational hierarchies to create highly convincing impersonation emails from executives requesting urgent fund transfers.",
+    "attack_steps": ["Compromise or spoof executive email accounts", "Use LLM to analyze and replicate executive writing style", "Send urgent payment requests to finance department", "Provide fraudulent wire transfer instructions", "Transfer funds to mule accounts before detection"],
+    "target_channel": "corporate email systems",
+    "detection_challenges": ["Style-matched emails pass human review", "Urgency and authority pressure bypass normal approval workflows", "Wire transfers are difficult to reverse once completed"],
+    "transaction_features": {"amount_range": [10000, 500000], "velocity_spike": false, "geographic_anomaly": true, "merchant_category": "travel", "time_pattern": "end-of-day requests to create time pressure", "card_present": false}
+  },
+  {
+    "attack_id": "se-smishing-ai-generated",
+    "name": "AI-Generated SMS Phishing (Smishing)",
+    "category": "Social Engineering",
+    "genai_amplification": "LLMs generate contextually relevant SMS messages that reference real merchant names, recent transaction amounts, and location data to create urgent fraud alert messages that steal credentials.",
+    "attack_steps": ["Purchase leaked transaction metadata from data brokers", "Use LLM to generate personalized fraud alert SMS messages", "Include legitimate-looking verification links", "Capture card details on AI-generated phishing pages", "Execute rapid card-not-present fraud with captured data"],
+    "target_channel": "SMS and mobile messaging",
+    "detection_challenges": ["Personalized messages reference real transaction details", "Short SMS format limits visible fraud indicators", "Urgency of fraud alerts overrides recipient caution"],
+    "transaction_features": {"amount_range": [100, 2000], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "transactions within 1 hour of smishing message delivery", "card_present": false}
+  },
+  {
+    "attack_id": "se-qr-code-overlay",
+    "name": "AI-Designed QR Code Payment Hijacking",
+    "category": "Social Engineering",
+    "genai_amplification": "GenAI designs visually identical QR code overlays that redirect payments to attacker-controlled accounts, complete with matching branding and contextual placement instructions.",
+    "attack_steps": ["Generate QR codes pointing to attacker payment accounts", "Use GenAI to design overlay stickers matching target merchant branding", "Place overlay QR codes on payment terminals and restaurant menus", "Intercept customer payments intended for legitimate merchants", "Withdraw funds before discrepancy is discovered"],
+    "target_channel": "QR code payment terminals",
+    "detection_challenges": ["Overlay QR codes are visually identical to originals", "Customers trust physical payment infrastructure", "Small merchants may not notice revenue discrepancies quickly"],
+    "transaction_features": {"amount_range": [10, 150], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "restaurant", "time_pattern": "consistent with normal merchant operating hours", "card_present": true}
+  },
+  {
+    "attack_id": "ato-credential-stuffing-ai",
+    "name": "AI-Optimized Credential Stuffing",
+    "category": "Account Takeover",
+    "genai_amplification": "ML models predict likely password variations from leaked credentials, achieving 10-20x higher success rates than traditional credential stuffing by learning password mutation patterns.",
+    "attack_steps": ["Aggregate leaked credential databases from multiple breaches", "Train ML model on password reuse and mutation patterns", "Generate likely password candidates per username", "Execute distributed login attempts across banking portals", "Access accounts and initiate unauthorized transactions"],
+    "target_channel": "mobile banking and web portal login",
+    "detection_challenges": ["AI-predicted passwords have higher success rates with fewer attempts", "Distributed attacks from residential proxies mimic legitimate traffic", "Password mutation patterns are unique per user"],
+    "transaction_features": {"amount_range": [500, 10000], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "immediate high-value transfers after account access", "card_present": false}
+  },
+  {
+    "attack_id": "ato-session-hijack-ai-fingerprint",
+    "name": "AI-Generated Browser Fingerprint Spoofing",
+    "category": "Account Takeover",
+    "genai_amplification": "GenAI generates synthetic browser fingerprints that exactly match the victim's device profile, enabling session hijacking and account access without triggering device-based authentication.",
+    "attack_steps": ["Intercept victim's browser fingerprint via compromised website", "Use GenAI to replicate exact device characteristics", "Inject stolen session tokens with matching fingerprint", "Access account without triggering re-authentication", "Modify account settings and execute transactions"],
+    "target_channel": "web banking portals",
+    "detection_challenges": ["Spoofed fingerprints match legitimate device profiles exactly", "Session continuity appears normal to monitoring systems", "Device-based authentication is bypassed entirely"],
+    "transaction_features": {"amount_range": [1000, 15000], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "online", "time_pattern": "transactions during victim's normal active hours", "card_present": false}
+  },
+  {
+    "attack_id": "ato-sim-swap-ai-social",
+    "name": "AI-Assisted SIM Swap Attack",
+    "category": "Account Takeover",
+    "genai_amplification": "LLMs generate convincing social engineering scripts for carrier support calls, adapting responses in real-time to overcome security questions and transfer the victim's phone number.",
+    "attack_steps": ["Research target's personal details from social media", "Use LLM to prepare and rehearse social engineering script", "Call mobile carrier impersonating the victim", "Transfer phone number to attacker-controlled SIM", "Intercept OTP messages and access banking accounts"],
+    "target_channel": "mobile carrier customer support",
+    "detection_challenges": ["AI-generated scripts handle unexpected security questions naturally", "SIM swaps can be completed in under 10 minutes", "OTP-based 2FA becomes completely compromised"],
+    "transaction_features": {"amount_range": [2000, 50000], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "rapid high-value transfers within 30 minutes of SIM swap", "card_present": false}
+  },
+  {
+    "attack_id": "ato-password-reset-deepfake",
+    "name": "Deepfake-Assisted Password Reset",
+    "category": "Account Takeover",
+    "genai_amplification": "Deepfake voice and video technology passes identity verification steps in password reset workflows, allowing attackers to take over accounts protected by biometric verification.",
+    "attack_steps": ["Identify target accounts with voice/video verification for password reset", "Generate deepfake voice and face models from public media", "Initiate password reset request through customer support", "Pass biometric verification using deepfake in real-time", "Change credentials and drain account before victim notices"],
+    "target_channel": "bank customer service password reset",
+    "detection_challenges": ["Deepfakes pass automated biometric checks", "Customer service agents cannot reliably detect synthetic media", "Password reset workflows are designed for convenience over security"],
+    "transaction_features": {"amount_range": [3000, 25000], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "atm", "time_pattern": "account drained within 2 hours of password reset", "card_present": false}
+  },
+  {
+    "attack_id": "ato-malware-ai-evasion",
+    "name": "AI-Polymorphic Banking Malware",
+    "category": "Account Takeover",
+    "genai_amplification": "LLMs generate polymorphic malware code that mutates its signature on each execution, evading antivirus detection while maintaining banking trojan functionality for credential theft.",
+    "attack_steps": ["Use LLM to generate evasive malware payload", "Distribute via AI-crafted phishing emails", "Malware captures banking credentials and session tokens", "Exfiltrate data through AI-generated covert channels", "Execute account takeover using stolen session data"],
+    "target_channel": "desktop and mobile banking applications",
+    "detection_challenges": ["Polymorphic code evades signature-based antivirus", "AI-generated communication channels are difficult to fingerprint", "Credential theft occurs silently without visible indicators"],
+    "transaction_features": {"amount_range": [500, 20000], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "automated transactions triggered by malware at off-peak hours", "card_present": false}
+  },
+  {
+    "attack_id": "si-synthetic-identity-creation",
+    "name": "Full Synthetic Identity Fabrication",
+    "category": "Synthetic Identity Fraud",
+    "genai_amplification": "GenAI combines real SSN fragments with AI-generated personal details, creating complete synthetic identities that build legitimate credit histories over months before executing bust-out fraud.",
+    "attack_steps": ["Acquire orphaned or deceased SSNs from data breaches", "Use GenAI to generate matching PII (name, DOB, address)", "Apply for secured credit cards to build credit history", "Gradually increase credit limits over 6-12 months", "Execute coordinated bust-out: max all credit lines simultaneously"],
+    "target_channel": "credit card applications and lending",
+    "detection_challenges": ["Synthetic identities have genuine SSNs that pass validation", "Gradual credit building mimics legitimate customer behavior", "Bust-out occurs after establishing trusted payment history"],
+    "transaction_features": {"amount_range": [5000, 50000], "velocity_spike": true, "geographic_anomaly": false, "merchant_category": "electronics", "time_pattern": "simultaneous max-limit purchases across multiple accounts", "card_present": true}
+  },
+  {
+    "attack_id": "si-synthetic-business-identity",
+    "name": "AI-Generated Fake Business Identity",
+    "category": "Synthetic Identity Fraud",
+    "genai_amplification": "LLMs create convincing business documentation including articles of incorporation, tax returns, and financial statements that pass underwriting review for business credit lines.",
+    "attack_steps": ["Use LLM to generate complete business documentation package", "Register business with state using synthetic owner identity", "Apply for business credit lines with AI-generated financials", "Build business credit score over 3-6 months", "Execute bust-out across multiple business credit accounts"],
+    "target_channel": "business credit applications",
+    "detection_challenges": ["AI-generated documents pass automated and manual review", "Business credit bureaus have limited verification capabilities", "Legitimate-looking revenue and tax history is difficult to verify"],
+    "transaction_features": {"amount_range": [10000, 200000], "velocity_spike": true, "geographic_anomaly": false, "merchant_category": "retail", "time_pattern": "large purchases concentrated in final week before bust-out", "card_present": true}
+  },
+  {
+    "attack_id": "si-child-identity-exploitation",
+    "name": "Synthetic Identity from Minor's SSN",
+    "category": "Synthetic Identity Fraud",
+    "genai_amplification": "GenAI pairs children's unused SSNs with synthetic adult identities, creating identities that won't trigger fraud alerts since minors have no existing credit history to contradict.",
+    "attack_steps": ["Acquire SSNs of minors from data breaches or dark web", "Use GenAI to generate adult identity paired with minor's SSN", "Apply for credit products — no conflicting credit history exists", "Build credit over 12-18 months mimicking young adult", "Execute bust-out fraud and abandon synthetic identity"],
+    "target_channel": "new account opening for credit cards",
+    "detection_challenges": ["Minor SSNs have no existing credit file to conflict", "Synthetic identity appears as young adult's first credit application", "Fraud is often not discovered until minor applies for credit years later"],
+    "transaction_features": {"amount_range": [1000, 15000], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "retail", "time_pattern": "gradual spending increase mimicking young adult patterns", "card_present": true}
+  },
+  {
+    "attack_id": "si-identity-morphing",
+    "name": "AI Identity Morphing and Evolution",
+    "category": "Synthetic Identity Fraud",
+    "genai_amplification": "GenAI gradually modifies synthetic identity attributes over time — changing addresses, phone numbers, and employment details — to evade link analysis and identity resolution systems.",
+    "attack_steps": ["Create initial synthetic identity with minimal footprint", "Use GenAI to plan identity evolution timeline", "Gradually update identity attributes across bureaus and institutions", "Maintain consistent patterns that avoid triggering change-of-info alerts", "Leverage evolved identity for higher-limit credit products"],
+    "target_channel": "credit bureau updates and account modifications",
+    "detection_challenges": ["Gradual changes mimic legitimate life events", "Identity resolution systems struggle with slowly morphing attributes", "Each individual change appears benign in isolation"],
+    "transaction_features": {"amount_range": [2000, 30000], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "retail", "time_pattern": "steady transaction volume with gradual amount increases", "card_present": true}
+  },
+  {
+    "attack_id": "ab-contactless-relay-attack",
+    "name": "NFC Relay Attack with AI Signal Processing",
+    "category": "Authorization Bypass",
+    "genai_amplification": "AI-enhanced signal processing reduces NFC relay latency below detection thresholds, enabling attackers to proxy contactless payments from victims' cards over long distances in real-time.",
+    "attack_steps": ["Deploy concealed NFC reader near victim's wallet or phone", "Relay captured NFC signal via low-latency network to co-conspirator", "AI signal processor compensates for relay-induced timing variations", "Co-conspirator presents relayed signal at point-of-sale terminal", "Transaction completes using victim's card without their knowledge"],
+    "target_channel": "contactless payment terminals",
+    "detection_challenges": ["AI processing makes relay timing indistinguishable from normal tap", "Transaction appears as standard contactless payment", "Victim's card never leaves their possession"],
+    "transaction_features": {"amount_range": [10, 100], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "retail", "time_pattern": "multiple contactless transactions at different locations simultaneously", "card_present": true}
+  },
+  {
+    "attack_id": "ab-api-fuzzing-ai",
+    "name": "AI-Powered Payment API Exploitation",
+    "category": "Authorization Bypass",
+    "genai_amplification": "LLMs analyze payment API documentation and generate targeted fuzzing inputs that discover authorization bypass vulnerabilities, race conditions, and logic flaws in payment processing.",
+    "attack_steps": ["Use LLM to analyze payment gateway API documentation", "Generate targeted API fuzzing sequences for edge cases", "Identify authorization bypass or race condition vulnerabilities", "Craft exploit payloads that skip payment verification steps", "Execute unauthorized transactions through discovered vulnerabilities"],
+    "target_channel": "payment gateway REST APIs",
+    "detection_challenges": ["AI-discovered vulnerabilities exploit unique logic flaws", "Bypass transactions may appear authorized in logs", "Novel attack vectors have no existing detection signatures"],
+    "transaction_features": {"amount_range": [100, 10000], "velocity_spike": true, "geographic_anomaly": false, "merchant_category": "online", "time_pattern": "burst of transactions exploiting same vulnerability window", "card_present": false}
+  },
+  {
+    "attack_id": "ab-tokenization-attack",
+    "name": "Payment Token Prediction and Replay",
+    "category": "Authorization Bypass",
+    "genai_amplification": "ML models analyze patterns in payment tokenization systems to predict valid tokens, enabling token replay attacks that bypass card-on-file security mechanisms.",
+    "attack_steps": ["Collect sample payment tokens from compromised merchant", "Train ML model on token generation patterns", "Predict valid tokens for other cardholders", "Replay predicted tokens against merchant payment systems", "Complete transactions without card details or authentication"],
+    "target_channel": "tokenized card-on-file payment systems",
+    "detection_challenges": ["Replayed tokens pass standard token validation", "Transactions appear as returning customer purchases", "Token prediction avoids triggering new-device authentication"],
+    "transaction_features": {"amount_range": [50, 500], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "online", "time_pattern": "transactions timed to coincide with merchant's batch processing", "card_present": false}
+  },
+  {
+    "attack_id": "ab-emv-downgrade-ai",
+    "name": "AI-Orchestrated EMV Downgrade Attack",
+    "category": "Authorization Bypass",
+    "genai_amplification": "AI manipulates terminal communication to force EMV chip transactions to fall back to less secure magnetic stripe processing, exploiting the weaker authentication in degraded mode.",
+    "attack_steps": ["Deploy modified POS terminal or shim device", "AI manages communication to simulate EMV chip failure", "Force fallback to magnetic stripe transaction mode", "Capture magnetic stripe data during fallback processing", "Create cloned cards from captured stripe data"],
+    "target_channel": "point-of-sale terminals with EMV fallback",
+    "detection_challenges": ["Fallback transactions are legitimate protocol behavior", "AI-managed failures appear as natural chip read errors", "Cloned stripe data can be used at other EMV-fallback merchants"],
+    "transaction_features": {"amount_range": [50, 1000], "velocity_spike": false, "geographic_anomaly": true, "merchant_category": "gas_station", "time_pattern": "transactions at merchants with known EMV fallback policies", "card_present": true}
+  },
+  {
+    "attack_id": "mrf-ai-chargeback-fraud",
+    "name": "AI-Optimized Friendly Fraud (Chargeback Abuse)",
+    "category": "Merchant & Refund Fraud",
+    "genai_amplification": "LLMs generate convincing dispute narratives and evidence packages that maximize chargeback success rates, learning from previous successful disputes to optimize future claims.",
+    "attack_steps": ["Make legitimate purchase with real payment method", "Receive product and verify it matches description", "Use LLM to generate convincing dispute narrative", "File chargeback with AI-crafted supporting documentation", "Retain product while receiving full refund through chargeback"],
+    "target_channel": "chargeback and dispute resolution",
+    "detection_challenges": ["AI-generated dispute narratives are internally consistent and compelling", "Legitimate purchase history makes fraud determination ambiguous", "Dispute systems are designed to favor consumer protection"],
+    "transaction_features": {"amount_range": [100, 2000], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "electronics", "time_pattern": "chargebacks filed 15-30 days after purchase, optimized for dispute windows", "card_present": false}
+  },
+  {
+    "attack_id": "mrf-fake-merchant-onboarding",
+    "name": "AI-Created Phantom Merchant Accounts",
+    "category": "Merchant & Refund Fraud",
+    "genai_amplification": "LLMs generate complete fake business profiles, websites, and financial documentation that pass payment processor onboarding verification, enabling direct fraud through merchant-side transaction processing.",
+    "attack_steps": ["Use LLM to generate complete business identity and documentation", "Create professional website with AI-generated product catalog", "Apply for merchant payment processing account", "Process transactions using stolen card numbers through merchant account", "Withdraw funds before chargebacks arrive and abandon merchant identity"],
+    "target_channel": "merchant payment processor onboarding",
+    "detection_challenges": ["AI-generated business documentation passes automated verification", "Professional websites with real-looking inventory appear legitimate", "Short operational window limits time for chargeback-based detection"],
+    "transaction_features": {"amount_range": [200, 5000], "velocity_spike": true, "geographic_anomaly": true, "merchant_category": "online", "time_pattern": "high transaction volume concentrated in 2-3 day window", "card_present": false}
+  },
+  {
+    "attack_id": "mrf-return-fraud-ai",
+    "name": "AI-Coordinated Return Fraud Network",
+    "category": "Merchant & Refund Fraud",
+    "genai_amplification": "LLMs coordinate networks of return fraud mules, generating unique return narratives, scheduling returns across multiple locations, and tracking merchant return policies to maximize refund yields.",
+    "attack_steps": ["Recruit return fraud mules via encrypted messaging", "Use LLM to analyze and track merchant return policies", "Purchase items with intent to return after use or substitution", "Generate unique return reasons to avoid pattern detection", "Coordinate returns across locations to stay below individual store thresholds"],
+    "target_channel": "retail store return counters and online returns",
+    "detection_challenges": ["Distributed returns across locations avoid single-store pattern detection", "AI-generated return reasons are unique and plausible", "Return policy compliance makes individual returns appear legitimate"],
+    "transaction_features": {"amount_range": [50, 500], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "retail", "time_pattern": "returns clustered around holiday return windows", "card_present": true}
+  },
+  {
+    "attack_id": "mrf-refund-manipulation",
+    "name": "AI-Assisted Refund Amount Manipulation",
+    "category": "Merchant & Refund Fraud",
+    "genai_amplification": "GenAI exploits merchant refund processing systems by generating modified receipts, manipulated transaction records, and convincing customer service interactions to obtain refunds exceeding original purchase amounts.",
+    "attack_steps": ["Make legitimate small purchase at target merchant", "Use GenAI to modify digital receipt with higher amount", "Contact customer service requesting refund for modified amount", "LLM-powered chatbot handles objections and escalation convincingly", "Receive refund exceeding original purchase amount"],
+    "target_channel": "customer service refund processing",
+    "detection_challenges": ["Modified receipts pass visual inspection", "Refund amounts within normal range don't trigger automated alerts", "Customer service pressure tactics are handled by AI in real-time"],
+    "transaction_features": {"amount_range": [100, 1000], "velocity_spike": false, "geographic_anomaly": false, "merchant_category": "retail", "time_pattern": "refund requests timed during high-volume periods when manual review is limited", "card_present": false}
+  }
+]

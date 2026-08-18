@@ -26,9 +26,10 @@ import xgboost as xgb
 
 logger = logging.getLogger(__name__)
 
-DATA_PATH = Path("data/synthetic_transactions/transactions.csv")
-MODEL_PATH = Path("backend/models/fraud_classifier_v1.pkl")
-METRICS_PATH = Path("backend/models/metrics.json")
+_PROJECT_ROOT = Path(__file__).parent.parent.parent
+DATA_PATH = _PROJECT_ROOT / "data" / "synthetic_transactions" / "transactions.csv"
+MODEL_PATH = _PROJECT_ROOT / "backend" / "models" / "fraud_classifier_v1.pkl"
+METRICS_PATH = _PROJECT_ROOT / "backend" / "models" / "metrics.json"
 
 FEATURE_COLS = [
     "amount", "velocity_1h", "amount_deviation",
@@ -83,7 +84,7 @@ class DefendEngine:
         )
 
         # Oversample minority fraud class
-        smote = SMOTE(sampling_strategy=0.5, random_state=42)
+        smote = SMOTE(sampling_strategy=0.5, random_state=42, k_neighbors=1)
         X_bal, y_bal = smote.fit_resample(X_train, y_train)
 
         neg, pos = (y_bal == 0).sum(), (y_bal == 1).sum()
@@ -95,7 +96,6 @@ class DefendEngine:
             n_estimators=200,
             scale_pos_weight=scale_pos,
             eval_metric="aucpr",
-            use_label_encoder=False,
             random_state=42,
             n_jobs=-1,
         )
@@ -225,7 +225,7 @@ class DefendEngine:
         llm = LLMClient()
         history: List[Dict] = []
 
-        with open(Path("data/attack_taxonomy.json")) as f:
+        with open(_PROJECT_ROOT / "data" / "attack_taxonomy.json") as f:
             taxonomy = json.load(f)
 
         # Train baseline model if not already trained
@@ -301,7 +301,7 @@ Return ONLY a JSON object with these exact keys:
                 )
                 # Append new attack to taxonomy and regenerate dataset
                 taxonomy.append(new_attack)
-                with open(Path("data/attack_taxonomy.json"), "w") as f:
+                with open(_PROJECT_ROOT / "data" / "attack_taxonomy.json", "w") as f:
                     json.dump(taxonomy, f, indent=2)
 
                 gen.run(force=True)
@@ -315,7 +315,7 @@ Return ONLY a JSON object with these exact keys:
             await asyncio.sleep(1)
 
         # Persist loop history
-        history_path = Path("data/feedback_loop_history.json")
+        history_path = _PROJECT_ROOT / "data" / "feedback_loop_history.json"
         with open(history_path, "w") as f:
             json.dump(history, f, indent=2)
 

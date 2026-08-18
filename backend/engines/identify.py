@@ -56,33 +56,68 @@ Return a JSON array (no markdown, no explanation outside JSON):
 class IdentifyEngine:
     def __init__(self):
         self.llm = LLMClient()
-        self.output_path = Path("data/attack_taxonomy.json")
+        # Use absolute path from project root
+        project_root = Path(__file__).parent.parent.parent
+        self.output_path = project_root / "data" / "attack_taxonomy.json"
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    def _extract_json_array(self, raw: str) -> List[dict]:
+        """Robustly extract a JSON array from LLM output, handling markdown fences and trailing text."""
+        import re
+        text = raw.strip()
+
+        # Strategy 1: Strip markdown code fences (```json ... ```)
+        fence_match = re.search(r'```(?:json)?\s*\n?(.*?)```', text, re.DOTALL)
+        if fence_match:
+            text = fence_match.group(1).strip()
+
+        # Strategy 2: Find the outermost JSON array brackets
+        start = text.find('[')
+        if start == -1:
+            raise ValueError("No JSON array found in LLM response")
+
+        # Find matching closing bracket by counting depth
+        depth = 0
+        end = -1
+        for i in range(start, len(text)):
+            if text[i] == '[':
+                depth += 1
+            elif text[i] == ']':
+                depth -= 1
+                if depth == 0:
+                    end = i + 1
+                    break
+
+        if end == -1:
+            raise ValueError("Unmatched JSON array brackets")
+
+        return json.loads(text[start:end])
 
     async def _generate_category(self, category: str, channel: str, count: int) -> List[dict]:
         prompt = PROMPT_TEMPLATE.format(category=category, channel=channel, count=count)
-        try:
-            raw = await self.llm.generate(prompt, temperature=0.8)
-            # Strip markdown fences if present
-            raw = raw.strip()
-            if raw.startswith("```"):
-                raw = raw.split("```")[1]
-                if raw.startswith("json"):
-                    raw = raw[4:]
-            attacks = json.loads(raw.strip())
-            logger.info(f"Generated {len(attacks)} attacks for '{category}'")
-            return attacks
-        except Exception as e:
-            logger.error(f"Failed to generate attacks for '{category}': {e}")
-            return []
+        for attempt in range(2):  # retry once on failure
+            try:
+                raw = await self.llm.generate(prompt, temperature=0.8)
+                attacks = self._extract_json_array(raw)
+                logger.info(f"Generated {len(attacks)} attacks for '{category}'")
+                return attacks
+            except Exception as e:
+                logger.warning(f"Attempt {attempt+1} failed for '{category}': {e}")
+                if attempt == 0:
+                    await asyncio.sleep(2)  # brief pause before retry
+        logger.error(f"Failed to generate attacks for '{category}' after 2 attempts")
+        return []
 
     async def run(self) -> List[dict]:
         """Generate full attack taxonomy across all categories."""
-        # Check if taxonomy already exists to avoid wasting LLM quota
+        # Check if taxonomy already exists (with actual data) to avoid wasting LLM quota
         if self.output_path.exists():
-            logger.info("attack_taxonomy.json already exists — loading from disk")
             with open(self.output_path) as f:
-                return json.load(f)
+                existing = json.load(f)
+            if len(existing) > 0:
+                logger.info(f"attack_taxonomy.json already has {len(existing)} attacks — loading from disk")
+                return existing
+            logger.info("attack_taxonomy.json exists but is empty — regenerating")
 
         logger.info("Generating attack taxonomy via LLM...")
         all_attacks: List[dict] = []
