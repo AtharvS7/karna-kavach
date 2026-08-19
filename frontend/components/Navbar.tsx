@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { clsx } from 'clsx'
+import ThemeToggle from './ThemeToggle'
 
 const NAV = [
   { href: '/',           label: 'Dashboard' },
@@ -45,10 +46,13 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Status pill */}
-        <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-slow" />
-          SYSTEM ACTIVE
+        {/* Theme toggle + Status pill */}
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-slow" />
+            SYSTEM ACTIVE
+          </div>
         </div>
       </div>
     </nav>

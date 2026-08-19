@@ -126,11 +126,11 @@ function AttackModal({ attack, onClose }: { attack: Attack; onClose: () => void 
               <h4 className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-3">
                 Transaction Feature Signatures
               </h4>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {Object.entries(tf).map(([k, v]) => (
-                  <div key={k} className="bg-ink-3 rounded-lg p-3 flex justify-between items-center text-xs">
-                    <span className="font-mono text-cream/40">{k}</span>
-                    <span className="font-mono text-emerald-400">
+                  <div key={k} className="bg-ink-3 rounded-lg px-4 py-3 flex flex-col gap-1 text-xs min-w-0">
+                    <span className="font-mono text-cream/40 truncate">{k}</span>
+                    <span className="font-mono text-emerald-400 break-words leading-relaxed">
                       {Array.isArray(v) ? `[${v.join(', ')}]` : String(v)}
                     </span>
                   </div>

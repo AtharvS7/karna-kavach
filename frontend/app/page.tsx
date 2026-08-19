@@ -49,7 +49,7 @@ export default async function DashboardPage() {
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-mc_red/30 bg-mc_red/10 text-mc_red text-xs font-mono mb-6 animate-fade-up">
             <span className="w-1.5 h-1.5 rounded-full bg-mc_red animate-pulse" />
-            MASTERCARD INNOVATION CHALLENGE 2026 · GFF MUMBAI
+            AI-POWERED FRAUD DEFENSE SYSTEM
           </div>
 
           <h1 className="font-display text-5xl md:text-7xl font-black text-cream leading-[1.05] mb-6 animate-fade-up delay-100">
@@ -151,28 +151,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      {/* Deadline banner */}
-      <section className="max-w-7xl mx-auto px-6 pb-16">
-        <div className="bg-gradient-to-r from-mc_red/10 via-ink-2 to-mc_amber/10 border border-mc_red/20 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <div className="text-xs font-mono text-mc_red uppercase tracking-widest mb-2">Submission Deadline</div>
-            <div className="font-display text-3xl font-bold text-cream">August 31, 2026</div>
-            <div className="text-cream/50 text-sm mt-1">11:59 PM GMT+5:30 · Kaggle Writeups</div>
-          </div>
-          <div className="text-right">
-            <div className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-2">GFF 2026 Presentation</div>
-            <div className="font-display text-xl font-bold text-cream">Sep 8–11, Mumbai</div>
-            <div className="text-cream/50 text-sm mt-1">Jio World Centre</div>
-          </div>
-          <div className="text-right">
-            <div className="text-xs font-mono text-mc_amber uppercase tracking-widest mb-2">Total Prize Pool</div>
-            <div className="font-display text-3xl font-bold bg-mc-gradient bg-clip-text text-transparent">
-              ₹4,48,000
-            </div>
-            <div className="text-cream/50 text-sm mt-1">~$4,707 USD</div>
-          </div>
-        </div>
-      </section>
+
     </div>
   )
 }

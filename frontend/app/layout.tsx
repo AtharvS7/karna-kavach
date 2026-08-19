@@ -21,13 +21,13 @@ const dmMono = DM_Mono({
 
 export const metadata: Metadata = {
   title: 'Karna Kavach — AI Defense Lab',
-  description: 'Mastercard Innovation Challenge 2026 — Red Team / Blue Team Payment Security',
+  description: 'Red Team / Blue Team AI system for payment fraud defense — identify, generate, and defend against GenAI-powered attacks.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${dmSans.variable} ${dmMono.variable}`}>
-      <body className="bg-ink text-cream font-body antialiased min-h-screen">
+    <html lang="en" className={`dark ${playfair.variable} ${dmSans.variable} ${dmMono.variable}`} suppressHydrationWarning>
+      <body className="bg-white dark:bg-ink text-gray-900 dark:text-cream font-body antialiased min-h-screen">
         <Navbar />
         <main className="pt-16">{children}</main>
       </body>
