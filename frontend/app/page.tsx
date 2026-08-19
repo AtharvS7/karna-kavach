@@ -1,12 +1,7 @@
+'use client'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { fetchMetrics } from '@/lib/api'
-
-const STAT_MOCK = [
-  { label: 'Attack Vectors Identified', value: '31', unit: 'unique', color: 'text-mc_red' },
-  { label: 'Synthetic Transactions', value: '15,000+', unit: 'generated', color: 'text-mc_amber' },
-  { label: 'Model Precision', value: '95.2%', unit: 'target', color: 'text-emerald-400' },
-  { label: 'Adversarial Iterations', value: '10', unit: 'feedback loops', color: 'text-sky-400' },
-]
 
 const PILLARS = [
   {
@@ -35,14 +30,29 @@ const PILLARS = [
   },
 ]
 
-export default async function DashboardPage() {
-  const metrics = await fetchMetrics().catch(() => null)
+export default function DashboardPage() {
+  const [metrics, setMetrics] = useState<Record<string, unknown> | null>(null)
+
+  useEffect(() => {
+    fetchMetrics().then(setMetrics).catch(() => null)
+  }, [])
+
+  const STAT_MOCK = [
+    { label: 'Attack Vectors Identified', value: '31', unit: 'unique', color: 'text-mc_red' },
+    { label: 'Synthetic Transactions', value: '15,000+', unit: 'generated', color: 'text-mc_amber' },
+    {
+      label: 'Model Precision',
+      value: metrics?.precision ? `${((metrics.precision as number) * 100).toFixed(1)}%` : '95.2%',
+      unit: 'target',
+      color: 'text-emerald-500 dark:text-emerald-400',
+    },
+    { label: 'Adversarial Iterations', value: '10', unit: 'feedback loops', color: 'text-sky-500 dark:text-sky-400' },
+  ]
 
   return (
     <div className="min-h-screen bg-ink noise-bg">
       {/* Hero */}
       <section className="relative max-w-7xl mx-auto px-6 pt-20 pb-16 overflow-hidden">
-        {/* Background decorative circles */}
         <div className="absolute -right-32 top-0 w-[600px] h-[600px] rounded-full bg-mc_red/5 blur-3xl pointer-events-none" />
         <div className="absolute -right-8 top-12 w-[400px] h-[400px] rounded-full bg-mc_amber/5 blur-3xl pointer-events-none" />
 
@@ -52,7 +62,7 @@ export default async function DashboardPage() {
             AI-POWERED FRAUD DEFENSE SYSTEM
           </div>
 
-          <h1 className="font-display text-5xl md:text-7xl font-black text-cream leading-[1.05] mb-6 animate-fade-up delay-100">
+          <h1 className="font-display text-5xl md:text-7xl font-black text-[var(--color-text)] leading-[1.05] mb-6 animate-fade-up delay-100">
             The Armor That
             <br />
             <span className="relative inline-block">
@@ -62,7 +72,7 @@ export default async function DashboardPage() {
             </span>
           </h1>
 
-          <p className="text-cream/60 text-lg leading-relaxed mb-10 max-w-xl animate-fade-up delay-200">
+          <p className="text-[var(--color-text-60)] text-lg leading-relaxed mb-10 max-w-xl animate-fade-up delay-200">
             Karna Kavach is a closed-loop adversarial AI system that identifies
             emerging GenAI-powered payment fraud, simulates it at scale, and
             defends against it — each attack making the armor stronger.
@@ -77,7 +87,7 @@ export default async function DashboardPage() {
             </Link>
             <Link
               href="/attacks"
-              className="px-6 py-3 border border-cream/20 text-cream/80 font-semibold text-sm rounded hover:border-cream/40 hover:text-cream transition-colors"
+              className="px-6 py-3 border border-[var(--color-border)] text-[var(--color-text-70)] font-semibold text-sm rounded hover:border-mc_red/30 hover:text-[var(--color-text)] transition-colors"
             >
               Explore Attack Library
             </Link>
@@ -95,12 +105,10 @@ export default async function DashboardPage() {
               style={{ animationDelay: `${i * 0.08}s`, opacity: 0 }}
             >
               <div className={`metric-number text-4xl font-bold mb-1 ${s.color}`}>
-                {metrics && s.label.includes('Precision')
-                  ? `${(metrics.precision * 100).toFixed(1)}%`
-                  : s.value}
+                {s.value}
               </div>
-              <div className="text-cream/40 text-xs uppercase tracking-widest">{s.unit}</div>
-              <div className="text-cream/70 text-sm mt-2">{s.label}</div>
+              <div className="text-[var(--color-text-40)] text-xs uppercase tracking-widest">{s.unit}</div>
+              <div className="text-[var(--color-text-70)] text-sm mt-2">{s.label}</div>
             </div>
           ))}
         </div>
@@ -109,10 +117,10 @@ export default async function DashboardPage() {
       {/* Three pillars */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
         <div className="mb-10">
-          <h2 className="font-display text-3xl font-bold text-cream mb-2">
+          <h2 className="font-display text-3xl font-bold text-[var(--color-text)] mb-2">
             The Three Pillars
           </h2>
-          <p className="text-cream/50 text-sm">
+          <p className="text-[var(--color-text-50)] text-sm">
             A closed feedback loop — each pillar feeds the next.
           </p>
         </div>
@@ -136,7 +144,7 @@ export default async function DashboardPage() {
               >
                 {p.title}
               </h3>
-              <p className="text-cream/60 text-sm leading-relaxed flex-1 mb-6">
+              <p className="text-[var(--color-text-60)] text-sm leading-relaxed flex-1 mb-6">
                 {p.desc}
               </p>
               <Link
@@ -150,8 +158,6 @@ export default async function DashboardPage() {
           ))}
         </div>
       </section>
-
-
     </div>
   )
 }

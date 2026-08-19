@@ -84,3 +84,4 @@ temp/
 .coverage
 htmlcov/
 .pytest_cache/
+backend/tests/test_self_learning.py

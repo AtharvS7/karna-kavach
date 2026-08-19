@@ -17,15 +17,15 @@ interface Attack {
 
 const CATEGORY_COLORS: Record<string, string> = {
   'Card-Not-Present Fraud': 'text-mc_red border-mc_red/30 bg-mc_red/10',
-  'Social Engineering':     'text-orange-400 border-orange-400/30 bg-orange-400/10',
+  'Social Engineering':     'text-orange-500 border-orange-500/30 bg-orange-500/10',
   'Account Takeover':       'text-mc_amber border-mc_amber/30 bg-mc_amber/10',
-  'Synthetic Identity Fraud':'text-sky-400 border-sky-400/30 bg-sky-400/10',
-  'Authorization Bypass':   'text-violet-400 border-violet-400/30 bg-violet-400/10',
-  'Merchant & Refund Fraud':'text-emerald-400 border-emerald-400/30 bg-emerald-400/10',
+  'Synthetic Identity Fraud':'text-sky-500 border-sky-500/30 bg-sky-500/10',
+  'Authorization Bypass':   'text-violet-500 border-violet-500/30 bg-violet-500/10',
+  'Merchant & Refund Fraud':'text-emerald-500 border-emerald-500/30 bg-emerald-500/10',
 }
 
 function AttackCard({ attack, onClick }: { attack: Attack; onClick: () => void }) {
-  const color = CATEGORY_COLORS[attack.category] ?? 'text-cream/60 border-cream/20 bg-cream/5'
+  const color = CATEGORY_COLORS[attack.category] ?? 'text-[var(--color-text-60)] border-[var(--color-border)] bg-[var(--color-bg-input)]'
   return (
     <button
       onClick={onClick}
@@ -35,15 +35,15 @@ function AttackCard({ attack, onClick }: { attack: Attack; onClick: () => void }
         <span className={clsx('text-xs font-mono px-2 py-1 rounded-full border', color)}>
           {attack.category}
         </span>
-        <span className="text-xs font-mono text-cream/30">{attack.attack_id}</span>
+        <span className="text-xs font-mono text-[var(--color-text-30)]">{attack.attack_id}</span>
       </div>
-      <h3 className="font-display text-lg font-bold text-cream mb-2 leading-snug">
+      <h3 className="font-display text-lg font-bold text-[var(--color-text)] mb-2 leading-snug">
         {attack.name}
       </h3>
-      <p className="text-cream/50 text-sm leading-relaxed line-clamp-2">
+      <p className="text-[var(--color-text-50)] text-sm leading-relaxed line-clamp-2">
         {attack.genai_amplification}
       </p>
-      <div className="mt-4 flex items-center gap-2 text-xs text-cream/30">
+      <div className="mt-4 flex items-center gap-2 text-xs text-[var(--color-text-30)]">
         <span className="font-mono">📡 {attack.target_channel}</span>
         <span>·</span>
         <span>{attack.attack_steps?.length ?? 0} steps</span>
@@ -53,12 +53,12 @@ function AttackCard({ attack, onClick }: { attack: Attack; onClick: () => void }
 }
 
 function AttackModal({ attack, onClose }: { attack: Attack; onClose: () => void }) {
-  const color = CATEGORY_COLORS[attack.category] ?? 'text-cream/60 border-cream/20 bg-cream/5'
+  const color = CATEGORY_COLORS[attack.category] ?? 'text-[var(--color-text-60)] border-[var(--color-border)] bg-[var(--color-bg-input)]'
   const tf = attack.transaction_features
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--color-bg-overlay)] backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -70,14 +70,14 @@ function AttackModal({ attack, onClose }: { attack: Attack; onClose: () => void 
             <span className={clsx('text-xs font-mono px-2 py-1 rounded-full border', color)}>
               {attack.category}
             </span>
-            <h2 className="font-display text-2xl font-bold text-cream mt-3">
+            <h2 className="font-display text-2xl font-bold text-[var(--color-text)] mt-3">
               {attack.name}
             </h2>
-            <p className="text-xs font-mono text-cream/30 mt-1">{attack.attack_id}</p>
+            <p className="text-xs font-mono text-[var(--color-text-30)] mt-1">{attack.attack_id}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-cream/30 hover:text-cream text-2xl leading-none flex-shrink-0"
+            className="text-[var(--color-text-30)] hover:text-[var(--color-text)] text-2xl leading-none flex-shrink-0"
           >
             ×
           </button>
@@ -88,7 +88,7 @@ function AttackModal({ attack, onClose }: { attack: Attack; onClose: () => void 
             <h4 className="text-xs font-mono text-mc_red uppercase tracking-widest mb-2">
               GenAI Amplification
             </h4>
-            <p className="text-cream/70 text-sm leading-relaxed bg-mc_red/5 border border-mc_red/10 rounded-lg p-4">
+            <p className="text-[var(--color-text-70)] text-sm leading-relaxed bg-mc_red/5 border border-mc_red/10 rounded-lg p-4">
               {attack.genai_amplification}
             </p>
           </div>
@@ -99,7 +99,7 @@ function AttackModal({ attack, onClose }: { attack: Attack; onClose: () => void 
             </h4>
             <ol className="space-y-2">
               {attack.attack_steps?.map((step, i) => (
-                <li key={i} className="flex gap-3 text-sm text-cream/70">
+                <li key={i} className="flex gap-3 text-sm text-[var(--color-text-70)]">
                   <span className="font-mono text-mc_amber flex-shrink-0">{String(i + 1).padStart(2, '0')}</span>
                   {step}
                 </li>
@@ -108,13 +108,13 @@ function AttackModal({ attack, onClose }: { attack: Attack; onClose: () => void 
           </div>
 
           <div>
-            <h4 className="text-xs font-mono text-sky-400 uppercase tracking-widest mb-2">
+            <h4 className="text-xs font-mono text-sky-500 uppercase tracking-widest mb-2">
               Detection Challenges
             </h4>
             <ul className="space-y-2">
               {attack.detection_challenges?.map((c, i) => (
-                <li key={i} className="flex gap-2 text-sm text-cream/70">
-                  <span className="text-sky-400 mt-0.5">⚠</span>
+                <li key={i} className="flex gap-2 text-sm text-[var(--color-text-70)]">
+                  <span className="text-sky-500 mt-0.5">⚠</span>
                   {c}
                 </li>
               ))}
@@ -123,14 +123,14 @@ function AttackModal({ attack, onClose }: { attack: Attack; onClose: () => void 
 
           {tf && (
             <div>
-              <h4 className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-3">
+              <h4 className="text-xs font-mono text-emerald-500 uppercase tracking-widest mb-3">
                 Transaction Feature Signatures
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {Object.entries(tf).map(([k, v]) => (
                   <div key={k} className="bg-ink-3 rounded-lg px-4 py-3 flex flex-col gap-1 text-xs min-w-0">
-                    <span className="font-mono text-cream/40 truncate">{k}</span>
-                    <span className="font-mono text-emerald-400 break-words leading-relaxed">
+                    <span className="font-mono text-[var(--color-text-40)] truncate">{k}</span>
+                    <span className="font-mono text-emerald-500 break-words leading-relaxed">
                       {Array.isArray(v) ? `[${v.join(', ')}]` : String(v)}
                     </span>
                   </div>
@@ -175,10 +175,10 @@ export default function AttacksPage() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-mc_red/30 bg-mc_red/10 text-mc_red text-xs font-mono mb-4">
             PILLAR 01 · IDENTIFY ENGINE
           </div>
-          <h1 className="font-display text-4xl font-black text-cream mb-3">
+          <h1 className="font-display text-4xl font-black text-[var(--color-text)] mb-3">
             Attack Library
           </h1>
-          <p className="text-cream/50 max-w-xl">
+          <p className="text-[var(--color-text-50)] max-w-xl">
             {attacks.length} GenAI-amplified payment fraud attack vectors across {categories.length} categories,
             discovered and documented by the Identify Engine.
           </p>
@@ -191,27 +191,27 @@ export default function AttacksPage() {
             placeholder="Search attacks…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 bg-ink-2 border border-ink-3 rounded-lg px-4 py-2.5 text-sm text-cream placeholder-cream/30 focus:outline-none focus:border-mc_red/40"
+            className="flex-1 bg-ink-2 border border-ink-3 rounded-lg px-4 py-2.5 text-sm text-[var(--color-text)] placeholder-[var(--color-text-30)] focus:outline-none focus:border-mc_red/40"
           />
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setActive('')}
               className={clsx(
                 'px-3 py-1.5 rounded-lg text-xs font-mono border transition-colors',
-                !active ? 'bg-mc_red/10 border-mc_red/30 text-mc_red' : 'border-ink-3 text-cream/50 hover:text-cream'
+                !active ? 'bg-mc_red/10 border-mc_red/30 text-mc_red' : 'border-ink-3 text-[var(--color-text-50)] hover:text-[var(--color-text)]'
               )}
             >
               All ({attacks.length})
             </button>
             {categories.map((cat) => {
-              const color = CATEGORY_COLORS[cat] ?? 'text-cream/60 border-cream/20'
+              const catColor = CATEGORY_COLORS[cat] ?? 'text-[var(--color-text-60)] border-[var(--color-border)]'
               return (
                 <button
                   key={cat}
                   onClick={() => setActive(cat === active ? '' : cat)}
                   className={clsx(
                     'px-3 py-1.5 rounded-lg text-xs font-mono border transition-colors',
-                    active === cat ? color : 'border-ink-3 text-cream/50 hover:text-cream'
+                    active === cat ? catColor : 'border-ink-3 text-[var(--color-text-50)] hover:text-[var(--color-text)]'
                   )}
                 >
                   {cat.split(' ')[0]}
@@ -243,10 +243,9 @@ export default function AttacksPage() {
         )}
 
         {!loading && filtered.length === 0 && (
-          <div className="text-center py-20 text-cream/30">
+          <div className="text-center py-20 text-[var(--color-text-30)]">
             <div className="text-4xl mb-4">🔍</div>
             <p className="font-mono text-sm">No attacks match your filters.</p>
-            <p className="text-xs mt-2">The Identify Engine may still be generating the taxonomy. Run <code className="text-mc_red">python pipeline.py --identify</code></p>
           </div>
         )}
       </div>

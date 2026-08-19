@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { predictFraud, generateTransaction } from '@/lib/api'
 import { clsx } from 'clsx'
 
@@ -45,12 +45,26 @@ function RiskGauge({ score }: { score: number }) {
   const label = score > 70 ? 'HIGH RISK' : score > 40 ? 'MEDIUM RISK' : 'LOW RISK'
   const angle = (score / 100) * 180 - 90
 
+  // Theme-aware gauge tick color
+  const [tickColor, setTickColor] = useState('rgba(255,255,255,0.26)')
+  useEffect(() => {
+    const check = () => {
+      const dark = document.documentElement.classList.contains('dark')
+      setTickColor(dark ? 'rgba(255,255,255,0.26)' : 'rgba(26,26,26,0.3)')
+    }
+    check()
+    const observer = new MutationObserver(check)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
+
+  const trackColor = typeof window !== 'undefined' && !document.documentElement.classList.contains('dark')
+    ? '#e0e0dc' : '#2A2A28'
+
   return (
     <div className="flex flex-col items-center">
       <svg viewBox="0 0 200 120" className="w-48 h-28">
-        {/* Track */}
-        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#2A2A28" strokeWidth="16" strokeLinecap="round" />
-        {/* Fill */}
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke={trackColor} strokeWidth="16" strokeLinecap="round" />
         <path
           d="M 20 100 A 80 80 0 0 1 180 100"
           fill="none"
@@ -60,7 +74,6 @@ function RiskGauge({ score }: { score: number }) {
           strokeDasharray={`${(score / 100) * 251.2} 251.2`}
           style={{ transition: 'stroke-dasharray 0.8s ease, stroke 0.4s ease' }}
         />
-        {/* Needle */}
         <line
           x1="100" y1="100"
           x2={100 + 60 * Math.cos(((angle - 90) * Math.PI) / 180)}
@@ -71,9 +84,8 @@ function RiskGauge({ score }: { score: number }) {
           style={{ transition: 'all 0.8s ease' }}
         />
         <circle cx="100" cy="100" r="6" fill={color} />
-        {/* Labels */}
-        <text x="18" y="118" fill="#ffffff44" fontSize="10" fontFamily="monospace">0</text>
-        <text x="178" y="118" fill="#ffffff44" fontSize="10" fontFamily="monospace">100</text>
+        <text x="18" y="118" fill={tickColor} fontSize="10" fontFamily="monospace">0</text>
+        <text x="178" y="118" fill={tickColor} fontSize="10" fontFamily="monospace">100</text>
       </svg>
       <div className="metric-number text-5xl font-bold mt-1" style={{ color }}>
         {score}
@@ -150,8 +162,8 @@ export default function DetectionPage() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-mc_amber/30 bg-mc_amber/10 text-mc_amber text-xs font-mono mb-4">
             PILLAR 03 · DEFEND ENGINE
           </div>
-          <h1 className="font-display text-4xl font-black text-cream mb-3">Live Detection</h1>
-          <p className="text-cream/50">
+          <h1 className="font-display text-4xl font-black text-[var(--color-text)] mb-3">Live Detection</h1>
+          <p className="text-[var(--color-text-50)]">
             Submit a transaction and get a real-time fraud risk score from the trained ensemble classifier.
           </p>
         </div>
@@ -160,11 +172,11 @@ export default function DetectionPage() {
           {/* Form */}
           <div className="bg-ink-2 border border-ink-3 rounded-2xl p-8 animate-fade-up delay-100">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-cream font-semibold text-lg">Transaction Details</h2>
+              <h2 className="text-[var(--color-text)] font-semibold text-lg">Transaction Details</h2>
               <div className="flex gap-2">
                 <button
                   onClick={() => loadSample(false)}
-                  className="px-3 py-1.5 text-xs font-mono border border-emerald-500/30 text-emerald-400 rounded hover:bg-emerald-500/10 transition-colors"
+                  className="px-3 py-1.5 text-xs font-mono border border-emerald-500/30 text-emerald-500 rounded hover:bg-emerald-500/10 transition-colors"
                 >
                   Load Legit
                 </button>
@@ -186,25 +198,25 @@ export default function DetectionPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-mono text-cream/40 uppercase tracking-widest block mb-1.5">
+                  <label className="text-xs font-mono text-[var(--color-text-40)] uppercase tracking-widest block mb-1.5">
                     Merchant Name
                   </label>
                   <input
                     name="merchant_name"
                     value={form.merchant_name}
                     onChange={handleChange}
-                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-cream focus:outline-none focus:border-mc_red/40"
+                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-text)] focus:outline-none focus:border-mc_red/40"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-mono text-cream/40 uppercase tracking-widest block mb-1.5">
+                  <label className="text-xs font-mono text-[var(--color-text-40)] uppercase tracking-widest block mb-1.5">
                     Category
                   </label>
                   <select
                     name="merchant_category"
                     value={form.merchant_category}
                     onChange={handleChange}
-                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-cream focus:outline-none focus:border-mc_red/40"
+                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-text)] focus:outline-none focus:border-mc_red/40"
                   >
                     {MERCHANT_CATEGORIES.map((c) => (
                       <option key={c} value={c}>{c}</option>
@@ -215,54 +227,54 @@ export default function DetectionPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-mono text-cream/40 uppercase tracking-widest block mb-1.5">
+                  <label className="text-xs font-mono text-[var(--color-text-40)] uppercase tracking-widest block mb-1.5">
                     Amount (USD)
                   </label>
                   <input
                     name="amount" type="number" step="0.01"
                     value={form.amount}
                     onChange={handleChange}
-                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-cream focus:outline-none focus:border-mc_red/40"
+                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-text)] focus:outline-none focus:border-mc_red/40"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-mono text-cream/40 uppercase tracking-widest block mb-1.5">
+                  <label className="text-xs font-mono text-[var(--color-text-40)] uppercase tracking-widest block mb-1.5">
                     Country
                   </label>
                   <input
                     name="country"
                     value={form.country}
                     onChange={handleChange}
-                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-cream focus:outline-none focus:border-mc_red/40"
+                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-text)] focus:outline-none focus:border-mc_red/40"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="text-xs font-mono text-cream/40 uppercase tracking-widest block mb-1.5">
+                  <label className="text-xs font-mono text-[var(--color-text-40)] uppercase tracking-widest block mb-1.5">
                     Velocity (1h)
                   </label>
                   <input
                     name="velocity_1h" type="number"
                     value={form.velocity_1h}
                     onChange={handleChange}
-                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-cream focus:outline-none focus:border-mc_red/40"
+                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-text)] focus:outline-none focus:border-mc_red/40"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-mono text-cream/40 uppercase tracking-widest block mb-1.5">
+                  <label className="text-xs font-mono text-[var(--color-text-40)] uppercase tracking-widest block mb-1.5">
                     Amt Deviation
                   </label>
                   <input
                     name="amount_deviation" type="number" step="0.01"
                     value={form.amount_deviation}
                     onChange={handleChange}
-                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-cream focus:outline-none focus:border-mc_red/40"
+                    className="w-full bg-ink-3 border border-ink-3 rounded-lg px-3 py-2.5 text-sm text-[var(--color-text)] focus:outline-none focus:border-mc_red/40"
                   />
                 </div>
                 <div className="flex flex-col justify-end pb-1">
-                  <label className="text-xs font-mono text-cream/40 uppercase tracking-widest block mb-1.5">
+                  <label className="text-xs font-mono text-[var(--color-text-40)] uppercase tracking-widest block mb-1.5">
                     Cross-Border
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -272,7 +284,7 @@ export default function DetectionPage() {
                       onChange={handleChange}
                       className="w-4 h-4 accent-mc_red"
                     />
-                    <span className="text-sm text-cream/60">Yes</span>
+                    <span className="text-sm text-[var(--color-text-60)]">Yes</span>
                   </label>
                 </div>
               </div>
@@ -295,10 +307,10 @@ export default function DetectionPage() {
 
           {/* Result */}
           <div className="bg-ink-2 border border-ink-3 rounded-2xl p-8 flex flex-col animate-fade-up delay-200">
-            <h2 className="text-cream font-semibold text-lg mb-6">Detection Result</h2>
+            <h2 className="text-[var(--color-text)] font-semibold text-lg mb-6">Detection Result</h2>
 
             {!result && !loading && (
-              <div className="flex-1 flex flex-col items-center justify-center text-cream/20">
+              <div className="flex-1 flex flex-col items-center justify-center text-[var(--color-text-30)]">
                 <div className="w-16 h-16 rounded-full border-2 border-dashed border-ink-3 flex items-center justify-center mb-4">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -311,7 +323,7 @@ export default function DetectionPage() {
             {loading && (
               <div className="flex-1 flex flex-col items-center justify-center gap-4">
                 <div className="w-16 h-16 rounded-full border-2 border-mc_red/30 border-t-mc_red animate-spin" />
-                <p className="text-sm font-mono text-cream/40">Running ensemble classifier…</p>
+                <p className="text-sm font-mono text-[var(--color-text-40)]">Running ensemble classifier…</p>
               </div>
             )}
 
@@ -327,17 +339,17 @@ export default function DetectionPage() {
                 )}>
                   <div className={clsx(
                     'text-2xl font-display font-bold mb-1',
-                    result.is_fraud ? 'text-mc_red' : 'text-emerald-400'
+                    result.is_fraud ? 'text-mc_red' : 'text-emerald-500'
                   )}>
                     {result.is_fraud ? '⚠ FRAUD DETECTED' : '✓ LEGITIMATE'}
                   </div>
-                  <div className="text-xs font-mono text-cream/50">
+                  <div className="text-xs font-mono text-[var(--color-text-50)]">
                     {(result.fraud_probability * 100).toFixed(1)}% probability · {result.confidence} confidence
                   </div>
                 </div>
 
                 <div className="w-full">
-                  <h4 className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-3">
+                  <h4 className="text-xs font-mono text-[var(--color-text-40)] uppercase tracking-widest mb-3">
                     Top Risk Signals
                   </h4>
                   <div className="space-y-2">
@@ -345,14 +357,14 @@ export default function DetectionPage() {
                       const val = typeof v === 'number' ? v : 0
                       return (
                         <div key={k} className="flex items-center gap-3">
-                          <span className="font-mono text-xs text-cream/40 w-36 flex-shrink-0">{k}</span>
+                          <span className="font-mono text-xs text-[var(--color-text-40)] w-36 flex-shrink-0">{k}</span>
                           <div className="flex-1 bg-ink-3 rounded-full h-1.5 overflow-hidden">
                             <div
                               className="h-full bg-mc_red/70 rounded-full transition-all duration-700"
                               style={{ width: `${Math.min(100, val * 100)}%` }}
                             />
                           </div>
-                          <span className="font-mono text-xs text-cream/60 w-12 text-right">
+                          <span className="font-mono text-xs text-[var(--color-text-60)] w-12 text-right">
                             {typeof v === 'number' ? v.toFixed(2) : String(v)}
                           </span>
                         </div>

@@ -1,12 +1,12 @@
 {
   "model_version": "v1.0",
-  "precision": 0.9989,
-  "recall": 0.9861,
-  "f1_score": 0.9925,
+  "precision": 0.999,
+  "recall": 0.9867,
+  "f1_score": 0.9928,
   "auc_roc": 0.9998,
   "auc_pr": 0.9996,
   "train_samples": 11998,
-  "test_samples": 2935,
+  "test_samples": 2975,
   "feature_cols": [
     "amount",
     "velocity_1h",

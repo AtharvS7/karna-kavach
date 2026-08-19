@@ -4,36 +4,71 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================ */
+/*  Theme System — CSS Custom Properties        */
+/* ============================================ */
+
 :root {
   --font-display: 'Playfair Display';
   --font-body: 'DM Sans';
   --font-mono: 'DM Mono';
+
+  /* Light mode colors */
+  --color-bg:       #ffffff;
+  --color-bg-card:  #f7f7f5;
+  --color-bg-input: #eeeeea;
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+  --color-text:       #1a1a1a;
+  --color-text-70:    rgba(26, 26, 26, 0.7);
+  --color-text-60:    rgba(26, 26, 26, 0.6);
+  --color-text-50:    rgba(26, 26, 26, 0.5);
+  --color-text-40:    rgba(26, 26, 26, 0.4);
+  --color-text-30:    rgba(26, 26, 26, 0.3);
+  --color-border:     #e0e0dc;
+  --color-border-subtle: rgba(26, 26, 26, 0.08);
+  --color-chart-grid: #e0e0dc;
+  --color-chart-tick: rgba(26, 26, 26, 0.45);
+  --color-chart-bar-muted: rgba(26, 26, 26, 0.10);
+  --color-tooltip-bg: #ffffff;
+  --color-tooltip-border: #e0e0dc;
+  --color-tooltip-text: #1a1a1a;
+  --color-nav-bg: rgba(255, 255, 255, 0.95);
+  --color-card-shadow: 0 0 0 1px rgba(235, 0, 27, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --color-scrollbar-track: #f0f0f0;
+  --color-scrollbar-thumb: #cccccc;
 }
 
-/* Mastercard brand circles decoration */
-.mc-circles::before,
-.mc-circles::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-}
-.mc-circles::before {
-  background: #EB001B;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.mc-circles::after {
-  background: #F79E1B;
-  left: 70px;
-  top: 50%;
-  transform: translateY(-50%);
-  mix-blend-mode: screen;
+.dark {
+  /* Dark mode colors */
+  --color-bg:       #141413;
+  --color-bg-card:  #1E1E1C;
+  --color-bg-input: #2A2A28;
+  --color-bg-overlay: rgba(20, 20, 19, 0.8);
+  --color-text:       #F5F5F0;
+  --color-text-70:    rgba(245, 245, 240, 0.7);
+  --color-text-60:    rgba(245, 245, 240, 0.6);
+  --color-text-50:    rgba(245, 245, 240, 0.5);
+  --color-text-40:    rgba(245, 245, 240, 0.4);
+  --color-text-30:    rgba(245, 245, 240, 0.3);
+  --color-border:     #2A2A28;
+  --color-border-subtle: rgba(245, 245, 240, 0.08);
+  --color-chart-grid: #2A2A28;
+  --color-chart-tick: rgba(255, 255, 255, 0.4);
+  --color-chart-bar-muted: rgba(255, 255, 255, 0.13);
+  --color-tooltip-bg: #1E1E1C;
+  --color-tooltip-border: #2A2A28;
+  --color-tooltip-text: #F5F5F0;
+  --color-nav-bg: rgba(20, 20, 19, 0.95);
+  --color-card-shadow: 0 0 0 1px rgba(235, 0, 27, 0.2), 0 8px 32px rgba(235, 0, 27, 0.13);
+  --color-scrollbar-track: #1E1E1C;
+  --color-scrollbar-thumb: #2A2A28;
 }
 
-/* Ink texture overlay */
+/* ============================================ */
+/*  Base Styles                                  */
+/* ============================================ */
+
+/* Ink texture overlay (dark mode only) */
 .noise-bg {
   position: relative;
 }
@@ -75,12 +110,8 @@
 .card-glow {
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-.dark .card-glow:hover {
-  box-shadow: 0 0 0 1px #EB001B33, 0 8px 32px #EB001B22;
-  transform: translateY(-2px);
-}
 .card-glow:hover {
-  box-shadow: 0 0 0 1px #EB001B22, 0 8px 24px rgba(0,0,0,0.08);
+  box-shadow: var(--color-card-shadow);
   transform: translateY(-2px);
 }
 
@@ -91,16 +122,10 @@
   letter-spacing: -0.02em;
 }
 
-/* Scrollbar — dark */
-.dark ::-webkit-scrollbar { width: 6px; }
-.dark ::-webkit-scrollbar-track { background: #1E1E1C; }
-.dark ::-webkit-scrollbar-thumb { background: #2A2A28; border-radius: 3px; }
-.dark ::-webkit-scrollbar-thumb:hover { background: #EB001B66; }
-
-/* Scrollbar — light */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f0f0f0; }
-::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--color-scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--color-scrollbar-thumb); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #EB001B66; }
 
 /* Fade-up animation */
@@ -114,38 +139,13 @@
 .delay-300 { animation-delay: 0.3s; opacity: 0; }
 .delay-400 { animation-delay: 0.4s; opacity: 0; }
 
-/* ============================================ */
-/*  Light Mode Theme Overrides                  */
-/* ============================================ */
-
-/* Light mode: remap ink/cream colors via utility overrides */
-/* bg-ink → white, bg-ink-2 → gray-50, bg-ink-3 → gray-100 */
-/* text-cream → gray-900, text-cream/XX → gray-XX */
-
-@layer utilities {
-  /* Light mode background overrides */
-  .bg-ink       { @apply bg-[#141413]; }
-  .bg-ink-2     { @apply bg-[#1E1E1C]; }
-  .bg-ink-3     { @apply bg-[#2A2A28]; }
+/* Smooth theme transitions */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
 }
-
-/* When NOT in dark mode, remap the ink/cream tokens */
-html:not(.dark) .bg-ink   { background-color: #ffffff !important; }
-html:not(.dark) .bg-ink-2 { background-color: #f8f8f6 !important; }
-html:not(.dark) .bg-ink-3 { background-color: #eeeeea !important; }
-
-html:not(.dark) .text-cream     { color: #1a1a1a !important; }
-html:not(.dark) .text-cream\/80 { color: rgba(26,26,26,0.8) !important; }
-html:not(.dark) .text-cream\/70 { color: rgba(26,26,26,0.7) !important; }
-html:not(.dark) .text-cream\/60 { color: rgba(26,26,26,0.6) !important; }
-html:not(.dark) .text-cream\/50 { color: rgba(26,26,26,0.5) !important; }
-html:not(.dark) .text-cream\/40 { color: rgba(26,26,26,0.4) !important; }
-html:not(.dark) .text-cream\/30 { color: rgba(26,26,26,0.3) !important; }
-
-html:not(.dark) .border-ink-3   { border-color: #e0e0dc !important; }
-html:not(.dark) .border-cream\/20 { border-color: rgba(26,26,26,0.12) !important; }
-
-html:not(.dark) .bg-ink\/80     { background-color: rgba(255,255,255,0.8) !important; }
-html:not(.dark) .bg-ink\/95     { background-color: rgba(255,255,255,0.95) !important; }
-
-html:not(.dark) .placeholder-cream\/30::placeholder { color: rgba(26,26,26,0.3) !important; }
+/* Exclude animations from the theme transition */
+.animate-fade-up, .animate-spin, .animate-pulse, .animate-pulse-slow, [class*="animate-"] {
+  transition-property: none;
+}
