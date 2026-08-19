@@ -1,23 +1,11 @@
 'use client'
 import { useEffect, useState } from 'react'
-import dynamic from 'next/dynamic'
 import { fetchMetrics } from '@/lib/api'
-
-// Lazy-load Recharts to reduce initial JS bundle
-const LineChart = dynamic(() => import('recharts').then(m => m.LineChart), { ssr: false })
-const Line = dynamic(() => import('recharts').then(m => m.Line), { ssr: false })
-const BarChart = dynamic(() => import('recharts').then(m => m.BarChart), { ssr: false })
-const Bar = dynamic(() => import('recharts').then(m => m.Bar), { ssr: false })
-const RadarChart = dynamic(() => import('recharts').then(m => m.RadarChart), { ssr: false })
-const Radar = dynamic(() => import('recharts').then(m => m.Radar), { ssr: false })
-const PolarGrid = dynamic(() => import('recharts').then(m => m.PolarGrid), { ssr: false })
-const PolarAngleAxis = dynamic(() => import('recharts').then(m => m.PolarAngleAxis), { ssr: false })
-const ResponsiveContainer = dynamic(() => import('recharts').then(m => m.ResponsiveContainer), { ssr: false })
-const XAxis = dynamic(() => import('recharts').then(m => m.XAxis), { ssr: false })
-const YAxis = dynamic(() => import('recharts').then(m => m.YAxis), { ssr: false })
-const CartesianGrid = dynamic(() => import('recharts').then(m => m.CartesianGrid), { ssr: false })
-const Tooltip = dynamic(() => import('recharts').then(m => m.Tooltip), { ssr: false })
-const Cell = dynamic(() => import('recharts').then(m => m.Cell), { ssr: false })
+import {
+  LineChart, Line, BarChart, Bar, RadarChart, Radar, PolarGrid,
+  PolarAngleAxis, ResponsiveContainer, XAxis, YAxis, CartesianGrid,
+  Tooltip, Cell
+} from 'recharts'
 
 const FEEDBACK_DATA = [
   { iteration: 0, detection_rate: 0.62, retrained: false },
@@ -70,9 +58,9 @@ function useChartTheme() {
 
   return {
     gridStroke: isDark ? '#2A2A28' : '#e0e0dc',
-    tickFill: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(26,26,26,0.45)',
-    tickFillStrong: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(26,26,26,0.55)',
-    barMuted: isDark ? 'rgba(255,255,255,0.13)' : 'rgba(26,26,26,0.10)',
+    tickFill: isDark ? 'rgba(255,255,255,0.45)' : 'rgba(26,26,26,0.5)',
+    tickFillStrong: isDark ? 'rgba(255,255,255,0.65)' : 'rgba(26,26,26,0.65)',
+    barMuted: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(26,26,26,0.12)',
     tooltipStyle: {
       backgroundColor: isDark ? '#1E1E1C' : '#ffffff',
       border: `1px solid ${isDark ? '#2A2A28' : '#e0e0dc'}`,
@@ -99,9 +87,11 @@ function MetricCard({ label, value, sub, color }: {
 
 export default function AnalyticsPage() {
   const [metrics, setMetrics] = useState<Record<string, unknown> | null>(null)
+  const [mounted, setMounted] = useState(false)
   const theme = useChartTheme()
 
   useEffect(() => {
+    setMounted(true)
     fetchMetrics().then(setMetrics).catch(() => null)
   }, [])
 
@@ -139,28 +129,32 @@ export default function AnalyticsPage() {
           <div className="bg-ink-2 border border-ink-3 rounded-2xl p-6 animate-fade-up delay-200">
             <h3 className="font-semibold text-[var(--color-text)] mb-1">Adversarial Feedback Loop</h3>
             <p className="text-xs text-[var(--color-text-40)] mb-6">Detection rate per iteration — retrains when below 70% threshold</p>
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={FEEDBACK_DATA}>
-                <CartesianGrid strokeDasharray="3 3" stroke={theme.gridStroke} />
-                <XAxis dataKey="iteration" tick={{ fill: theme.tickFill, fontSize: 11 }} label={{ value: 'Iteration', position: 'insideBottom', offset: -2, fill: theme.tickFill, fontSize: 11 }} />
-                <YAxis tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} tick={{ fill: theme.tickFill, fontSize: 11 }} domain={[0.5, 1]} />
-                <Tooltip
-                  formatter={(v: number) => [`${(v * 100).toFixed(1)}%`, 'Detection Rate']}
-                  contentStyle={theme.tooltipStyle}
-                />
-                <Line type="monotone" dataKey={() => 0.7} stroke="#F79E1B44" strokeDasharray="4 4" dot={false} name="Threshold" />
-                <Line
-                  type="monotone" dataKey="detection_rate"
-                  stroke="#EB001B" strokeWidth={2} dot={(props) => {
-                    const { cx, cy, payload } = props
-                    return payload.retrained
-                      ? <circle key={cx} cx={cx} cy={cy} r={5} fill="#F79E1B" stroke={theme.dotStroke} strokeWidth={2} />
-                      : <circle key={cx} cx={cx} cy={cy} r={3} fill="#EB001B" />
-                  }}
-                  name="Detection Rate"
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={FEEDBACK_DATA}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={theme.gridStroke} />
+                  <XAxis dataKey="iteration" tick={{ fill: theme.tickFill, fontSize: 11 }} label={{ value: 'Iteration', position: 'insideBottom', offset: -2, fill: theme.tickFill, fontSize: 11 }} />
+                  <YAxis tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} tick={{ fill: theme.tickFill, fontSize: 11 }} domain={[0.5, 1]} />
+                  <Tooltip
+                    formatter={(v: number) => [`${(v * 100).toFixed(1)}%`, 'Detection Rate']}
+                    contentStyle={theme.tooltipStyle}
+                  />
+                  <Line type="monotone" dataKey={() => 0.7} stroke="#F79E1B44" strokeDasharray="4 4" dot={false} name="Threshold" />
+                  <Line
+                    type="monotone" dataKey="detection_rate"
+                    stroke="#EB001B" strokeWidth={2} dot={(props) => {
+                      const { cx, cy, payload } = props
+                      return payload.retrained
+                        ? <circle key={cx} cx={cx} cy={cy} r={5} fill="#F79E1B" stroke={theme.dotStroke} strokeWidth={2} />
+                        : <circle key={cx} cx={cx} cy={cy} r={3} fill="#EB001B" />
+                    }}
+                    name="Detection Rate"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[220px] w-full bg-ink-3/30 animate-pulse rounded-lg" />
+            )}
             <p className="text-xs font-mono text-mc_amber mt-3">
               ● Orange dots = model retrained on new adversarial samples
             </p>
@@ -170,14 +164,18 @@ export default function AnalyticsPage() {
           <div className="bg-ink-2 border border-ink-3 rounded-2xl p-6 animate-fade-up delay-300">
             <h3 className="font-semibold text-[var(--color-text)] mb-1">Model Performance Radar</h3>
             <p className="text-xs text-[var(--color-text-40)] mb-4">Ensemble classifier across all evaluation axes</p>
-            <ResponsiveContainer width="100%" height={250}>
-              <RadarChart data={RADAR_DATA}>
-                <PolarGrid stroke={theme.gridStroke} />
-                <PolarAngleAxis dataKey="metric" tick={{ fill: theme.tickFillStrong, fontSize: 11 }} />
-                <Radar dataKey="value" stroke="#EB001B" fill="#EB001B" fillOpacity={0.15} strokeWidth={2} />
-                <Tooltip contentStyle={theme.tooltipStyle} formatter={(v: number) => [`${v}%`]} />
-              </RadarChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <RadarChart data={RADAR_DATA}>
+                  <PolarGrid stroke={theme.gridStroke} />
+                  <PolarAngleAxis dataKey="metric" tick={{ fill: theme.tickFillStrong, fontSize: 11 }} />
+                  <Radar dataKey="value" stroke="#EB001B" fill="#EB001B" fillOpacity={0.15} strokeWidth={2} />
+                  <Tooltip contentStyle={theme.tooltipStyle} formatter={(v: number) => [`${v}%`]} />
+                </RadarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[250px] w-full bg-ink-3/30 animate-pulse rounded-lg" />
+            )}
           </div>
         </div>
 
@@ -187,25 +185,29 @@ export default function AnalyticsPage() {
           <div className="bg-ink-2 border border-ink-3 rounded-2xl p-6 animate-fade-up delay-200">
             <h3 className="font-semibold text-[var(--color-text)] mb-1">Feature Importance</h3>
             <p className="text-xs text-[var(--color-text-40)] mb-6">XGBoost feature contribution scores</p>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={FEATURE_IMPORTANCE} layout="vertical" margin={{ left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={theme.gridStroke} horizontal={false} />
-                <XAxis type="number" tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} tick={{ fill: theme.tickFill, fontSize: 11 }} />
-                <YAxis type="category" dataKey="feature" tick={{ fill: theme.tickFillStrong, fontSize: 11 }} width={130} />
-                <Tooltip
-                  formatter={(v: number) => [`${(v * 100).toFixed(1)}%`, 'Importance']}
-                  contentStyle={theme.tooltipStyle}
-                />
-                <Bar dataKey="importance" radius={[0, 4, 4, 0]}>
-                  {FEATURE_IMPORTANCE.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={i === 0 ? '#EB001B' : i === 1 ? '#FF5F00' : i === 2 ? '#F79E1B' : theme.barMuted}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={FEATURE_IMPORTANCE} layout="vertical" margin={{ left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={theme.gridStroke} horizontal={false} />
+                  <XAxis type="number" tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} tick={{ fill: theme.tickFill, fontSize: 11 }} />
+                  <YAxis type="category" dataKey="feature" tick={{ fill: theme.tickFillStrong, fontSize: 11 }} width={130} />
+                  <Tooltip
+                    formatter={(v: number) => [`${(v * 100).toFixed(1)}%`, 'Importance']}
+                    contentStyle={theme.tooltipStyle}
+                  />
+                  <Bar dataKey="importance" radius={[0, 4, 4, 0]}>
+                    {FEATURE_IMPORTANCE.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={i === 0 ? '#EB001B' : i === 1 ? '#FF5F00' : i === 2 ? '#F79E1B' : theme.barMuted}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[220px] w-full bg-ink-3/30 animate-pulse rounded-lg" />
+            )}
           </div>
 
           {/* Model comparison */}
