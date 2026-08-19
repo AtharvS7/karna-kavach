@@ -1,127 +1,187 @@
-# Karna Kavach - AI Defense Lab for Payment Security
-
-**Mastercard Innovation Challenge 2026 @ GFF**
+# Karna Kavach — AI Defense Lab for Payment Security
 
 > Build the attack, then build the defense.
 
-Karna Kavach is an end-to-end Red Team/Blue Team AI system that identifies emerging GenAI-powered payment fraud attacks, generates realistic simulations at scale, and defends against them with accurate ML detection models.
+Karna Kavach is a **Red Team / Blue Team AI system** for payment fraud defense. It identifies emerging GenAI-powered fraud attack vectors, generates realistic synthetic fraud data at scale, and trains ML models to detect them — all within a closed-loop adversarial feedback pipeline.
 
-Named after Karna's impenetrable armor from the Mahabharata, this system provides comprehensive protection against evolving payment fraud threats.
+Named after [Karna's impenetrable armor](https://en.wikipedia.org/wiki/Karna) from the Mahabharata, the system provides comprehensive, self-improving protection against evolving payment fraud threats.
 
-## 🎯 Challenge Overview
+---
 
-GenAI has lowered the barrier for sophisticated, fast-evolving payment fraud. This project addresses the Mastercard Innovation Challenge 2026 by building a closed-loop adversarial AI system across three core pillars:
+## How It Works
 
-### 1. Identify Engine
-Research and map the landscape of emerging GenAI-powered fraud attacks targeting payments. Surface 30+ distinct, plausible attack vectors across channels, rails, and social-engineering surfaces.
-
-### 2. Generate Engine
-Build algorithms and agents that generate and simulate attacks at scale with high fidelity - realistic distributions, behaviors, and edge cases that are genuinely useful for training and stress-testing defenses.
-
-### 3. Defend Engine
-Build an AI/ML classifier that detects, flags, and mitigates the generated attacks with high precision and recall while keeping false positives on legitimate payments low.
-
-## 🏗️ Architecture
+The system runs a three-phase pipeline:
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Web UI (Frontend)                     │
-│  Dashboard · Attack Library · Live Detection · Analytics │
-└─────────────────┬───────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────┐
-│              Backend API (FastAPI)                       │
-│  Orchestration · State Management · Model Serving        │
-└─────────┬──────────────┬────────────────┬───────────────┘
-          │              │                │
-    ┌─────▼─────┐  ┌────▼────┐   ┌──────▼──────┐
-    │ Identify  │  │Generate │   │   Defend    │
-    │  Engine   │  │ Engine  │   │   Engine    │
-    │           │  │         │   │             │
-    │ LLM-based │  │LLM+Rules│   │ ML Classifier│
-    │ research  │  │synthetic│   │  (XGBoost/  │
-    │ agent     │  │fraud gen│   │ Neural Net) │
-    └───────────┘  └─────────┘   └─────────────┘
-          │              │                │
-          └──────────────┴────────────────┘
-                         │
-                  ┌──────▼──────┐
-                  │  Supabase   │
-                  │  (Postgres) │
-                  │ Attack DB   │
-                  │ Metrics DB  │
-                  └─────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                    Web Dashboard (Next.js)                    │
+│  Attack Library · Live Detection · Analytics · Simulations   │
+└──────────────────┬───────────────────────────────────────────┘
+                   │ REST API
+┌──────────────────▼───────────────────────────────────────────┐
+│               Backend API (FastAPI + Python)                  │
+│   Orchestration · Model Serving · Real-Time Inference         │
+└────────┬───────────────┬────────────────┬────────────────────┘
+         │               │                │
+   ┌─────▼─────┐   ┌────▼────┐    ┌─────▼──────┐
+   │ Identify  │   │Generate │    │  Defend    │
+   │  Engine   │   │ Engine  │    │  Engine    │
+   │           │   │         │    │            │
+   │ LLM-based │   │Faker +  │    │ XGBoost + │
+   │ attack    │   │LLM-aug. │    │ RF + LR   │
+   │ research  │   │synthetic│    │ Ensemble  │
+   │           │   │fraud gen│    │ Classifier│
+   └─────┬─────┘   └────┬────┘    └─────┬─────┘
+         │              │               │
+         └──────────────┴───────────────┘
+                        │
+            ┌───────────▼───────────┐
+            │  Adversarial Feedback │
+            │  Loop (10 iterations) │
+            │  Attack → Detect →    │
+            │  Retrain → Repeat     │
+            └───────────────────────┘
 ```
 
-## 🛠️ Tech Stack
+### Phase 1: Identify
 
-### Frontend
-- **Framework:** Next.js 14 (App Router) + React 18
-- **UI:** Tailwind CSS + shadcn/ui components
-- **Charts:** Recharts for metrics visualization
-- **Deploy:** Vercel (free tier)
+An LLM-powered research agent (Google Gemini / Groq) maps the landscape of GenAI-powered fraud attacks. It produces a structured **attack taxonomy** of 30+ distinct attack vectors, categorized across:
 
-### Backend
-- **API:** FastAPI (Python)
-- **ML:** scikit-learn, XGBoost, imbalanced-learn
-- **LLM Integration:** Google Gemini 3.6 Flash + Groq Qwen 3.6 27B (fallback)
-- **Deploy:** Render (free tier)
+- **Account Takeover** — Deepfake voice/video auth bypass, credential stuffing
+- **Card-Not-Present Fraud** — AI-generated merchant facades, tokenization exploits
+- **Synthetic Identity Fraud** — LLM-assembled identities, credit-building schemes
+- **Social Engineering** — AI chatbot phishing, vishing with voice cloning
+- **Authorization Bypass** — Real-time OTP interception, biometric spoofing
+- **Merchant & Refund Fraud** — AI-forged receipts, coordinated refund abuse
 
-### Database & Caching
-- **Primary:** Supabase (Postgres, 500MB free)
-- **Caching:** Upstash Redis (10K commands/day free)
+Each attack includes: GenAI amplification details, step-by-step methodology, target channels, detection challenges, and expected transaction features.
 
-### Data Generation
-- **Sparkov** - Synthetic credit card transaction generator
-- **SDV + CTGAN** - Conditional tabular GAN for realistic fraud patterns
-- **Faker** - PII and merchant data generation
-- **LLM-augmented** - GenAI-powered social engineering scenarios
+### Phase 2: Generate
 
-## 📋 Project Structure
+The Generate Engine creates **15,000+ synthetic transactions** (10K legitimate + 5K fraud) with realistic distributions:
+
+- **Faker** for PII, merchant names, and geographic data
+- **Feature engineering**: velocity tracking, amount deviation, cross-border signals
+- **Attack-injected fraud**: each taxonomy attack generates ~150 fraud transactions with attack-specific behavioral signatures (velocity spikes, geographic anomalies, amount ranges)
+- **10% international legitimate transactions** to prevent geographic feature leakage
+
+### Phase 3: Defend
+
+A **soft-voting ensemble classifier** (XGBoost + Random Forest + Logistic Regression) trained on 8 engineered features:
+
+| Feature | Description |
+|---|---|
+| `amount` | Transaction amount |
+| `velocity_1h` | Transactions by this card in the last hour |
+| `amount_deviation` | How far from the cardholder's average spend |
+| `cross_border` | Whether the transaction crosses country borders |
+| `card_present` | Physical card present at POS |
+| `txn_index` | Sequential index per cardholder |
+| `mcc` | Merchant Category Code |
+| `merchant_category_enc` | Label-encoded merchant category |
+
+**Current model performance:**
+
+| Metric | Score |
+|---|---|
+| Precision | 99.89% |
+| Recall | 98.61% |
+| F1-Score | 99.25% |
+| AUC-ROC | 99.98% |
+| AUC-PR | 99.96% |
+
+### Adversarial Feedback Loop
+
+After initial training, an automated loop runs 10 iterations:
+
+1. Ask the LLM to design a new **evasive** attack variant
+2. Generate 100 probe transactions using that attack
+3. Test the current model's detection rate
+4. If detection < 70%, inject the new attack into the taxonomy, regenerate data, and **retrain**
+5. Log iteration results and move to the next round
+
+This ensures the system continuously hardens itself against novel attack patterns.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js 14 (App Router), React 18, Tailwind CSS, shadcn/ui, Recharts |
+| **Backend** | FastAPI (Python 3.10+), async with uvicorn |
+| **ML** | scikit-learn, XGBoost, imbalanced-learn (SMOTE), pandas, numpy |
+| **LLM** | Google Gemini 3.6 Flash (primary), Groq (fallback) |
+| **Data** | Faker, custom synthetic generators |
+| **Database** | PostgreSQL (prod), SQLite via aiosqlite (local fallback) |
+| **Deploy** | Docker Compose (Postgres + Backend + Frontend) |
+
+---
+
+## Project Structure
 
 ```
 karna-kavach/
 ├── backend/
-│   ├── api/              # FastAPI route handlers
-│   ├── models/           # ML models (XGBoost, Neural Nets)
-│   ├── generators/       # Synthetic fraud data generators
-│   ├── engines/          # Identify, Generate, Defend engines
-│   ├── db/               # Database models and migrations
-│   ├── tests/            # Unit and integration tests
-│   └── requirements.txt  # Python dependencies
+│   ├── api/                         # FastAPI app + route handlers
+│   │   ├── main.py                  # App entry point, lifespan, CORS
+│   │   └── routes/
+│   │       ├── attacks.py           # GET /api/attacks/, categories, by-id
+│   │       ├── predict.py           # POST /api/predict/, train, metrics
+│   │       └── generate.py          # POST /api/generate/transaction, batch
+│   ├── engines/
+│   │   ├── identify.py              # LLM attack taxonomy research
+│   │   ├── generate.py              # Synthetic fraud data generator
+│   │   ├── defend.py                # ML ensemble + adversarial loop
+│   │   └── llm_client.py            # Gemini / Groq abstraction
+│   ├── db/
+│   │   ├── database.py              # Async SQLAlchemy engine + session
+│   │   └── models.py                # ORM models (Attack, Transaction, Metric)
+│   ├── models/                      # Persisted ML artifacts
+│   │   ├── fraud_classifier_v1.pkl  # Trained ensemble model
+│   │   ├── label_encoder_v1.pkl     # Persisted LabelEncoder
+│   │   └── metrics.json             # Latest training metrics
+│   ├── pipeline.py                  # CLI: run full identify→generate→defend
+│   ├── retrain.py                   # Quick retrain script
+│   ├── config.py                    # Settings (env vars, API keys)
+│   ├── requirements.txt             # Python dependencies
+│   └── tests/                       # pytest test suite
 ├── frontend/
-│   ├── app/              # Next.js pages (App Router)
-│   ├── components/       # React components
-│   ├── lib/              # Utilities and helpers
-│   └── package.json      # Node dependencies
+│   ├── app/
+│   │   ├── page.tsx                 # Dashboard home page
+│   │   ├── attacks/page.tsx         # Attack taxonomy browser
+│   │   ├── detection/page.tsx       # Live fraud detection UI
+│   │   └── analytics/page.tsx       # Model metrics & charts
+│   ├── components/                  # Reusable React components
+│   ├── lib/api.ts                   # Shared API client
+│   ├── next.config.js               # Next.js config (standalone output)
+│   └── package.json
 ├── data/
-│   ├── attack_taxonomy.json      # Identified attack vectors
-│   ├── synthetic_transactions/   # Generated fraud data
-│   └── schema.sql               # Database schema
-├── notebooks/
-│   ├── 01_research.ipynb        # Attack research and EDA
-│   ├── 02_generation.ipynb      # Synthetic data generation
-│   └── 03_modeling.ipynb        # ML model training
-├── docs/
-│   ├── walkthrough.pptx         # Solution presentation
-│   └── architecture.md          # Technical architecture
+│   ├── attack_taxonomy.json         # 31 identified attack vectors
+│   ├── synthetic_transactions/
+│   │   └── transactions.csv         # Generated dataset (~15K rows)
+│   └── schema.sql                   # PostgreSQL schema
 ├── docker/
 │   ├── Dockerfile.backend
-│   └── docker-compose.yml
-├── .env.example
-├── .gitignore
-├── README.md
-└── PLAN.md
+│   └── Dockerfile.frontend
+├── docker-compose.yml               # Full-stack orchestration
+├── notebooks/                       # Jupyter EDA & modeling notebooks
+├── docs/                            # Architecture docs & presentation
+├── .env.example                     # Environment variable template
+└── PLAN.md                          # Implementation plan & milestones
 ```
 
-## 🚀 Quick Start
+---
+
+## Quick Start
 
 ### Prerequisites
+
 - Python 3.10+
 - Node.js 18+
 - Git
 
-### Backend Setup
+### Backend
 
 ```bash
 cd backend
@@ -131,96 +191,107 @@ pip install -r requirements.txt
 
 # Set up environment variables
 cp ../.env.example .env
-# Edit .env with your API keys
-
-# Run database migrations
-alembic upgrade head
+# Edit .env with your API keys (GEMINI_API_KEY, GROQ_API_KEY)
 
 # Start the API server
 uvicorn api.main:app --reload
 ```
 
-### Frontend Setup
+The backend starts at `http://localhost:8000`. Without PostgreSQL, it automatically falls back to SQLite + JSON-based data serving.
+
+### Frontend
 
 ```bash
 cd frontend
 npm install
-
-# Start the development server
 npm run dev
 ```
 
-Visit `http://localhost:3000` to see the web prototype.
+Visit `http://localhost:3000` to see the dashboard.
 
-## 📊 Key Features
+### Docker (full stack with PostgreSQL)
 
-### Attack Library
-- 30+ documented GenAI-powered fraud attack vectors
-- Categorized by channel (CNP, ATO, social engineering, synthetic identity)
-- Real-world examples and detection challenges
+```bash
+docker-compose up --build
+```
 
-### Synthetic Fraud Generator
-- 10,000+ legitimate transactions
-- 5,000+ labeled fraudulent transactions
-- Realistic distributions matching real payment data
-- LLM-augmented attack scenarios
+This starts PostgreSQL, the FastAPI backend, and the Next.js frontend together.
 
-### ML Detection Models
-- XGBoost + RandomForest + LogisticRegression voting ensemble
-- **Precision: 100%** | **Recall: 99%** | **F1: 99.5%** | **AUC-ROC: 99.98%**
-- SMOTE oversampling for class balance handling
-- Real-time inference API via FastAPI
+---
 
-### Adversarial Feedback Loop
-- Defense gaps feed back into attack generation
-- Continuous model retraining on evolved attacks
-- 10-iteration adversarial testing pipeline
+## API Endpoints
 
-## 📈 Evaluation Metrics
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/health` | Health check |
+| `GET` | `/api/attacks/` | List all attack vectors (with optional `?category=` filter) |
+| `GET` | `/api/attacks/categories/list` | List attack categories |
+| `GET` | `/api/attacks/{attack_id}` | Get a single attack by ID |
+| `POST` | `/api/predict/` | Predict fraud probability for a transaction |
+| `GET` | `/api/predict/metrics` | Get current model performance metrics |
+| `POST` | `/api/predict/train` | Trigger model retraining (background) |
+| `POST` | `/api/predict/feedback-loop` | Run adversarial feedback loop |
+| `POST` | `/api/generate/transaction` | Generate a single synthetic transaction |
+| `POST` | `/api/generate/batch` | Generate a batch of transactions |
 
-Our system is evaluated on:
+### Example: Fraud Prediction
 
-1. **Diversity of attacks identified** - Breadth and depth of attack taxonomy
-2. **Fidelity of attacks in simulation** - Realism of synthetic fraud data
-3. **Detection algorithm efficacy** - Precision, recall, F1, AUC-ROC
-4. **Novelty of the solution** - Innovative approaches and techniques
-5. **Real-world feasibility** - Production deployment readiness
+```bash
+curl -X POST http://localhost:8000/api/predict/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "merchant_name": "Unknown Electronics",
+    "merchant_category": "electronics",
+    "amount": 4999.99,
+    "city": "Lagos",
+    "country": "NG",
+    "card_present": false,
+    "velocity_1h": 8,
+    "amount_deviation": 15.0,
+    "cross_border": true,
+    "mcc": 5732,
+    "txn_index": 50
+  }'
+```
 
-## 🏆 Competition Details
+Response:
 
-- **Event:** Mastercard Innovation Challenge 2026 @ Global Fintech Fest
-- **Deadline:** August 31, 2026, 11:59 PM GMT+5:30
-- **Location:** Jio World Centre, Mumbai
-- **Prizes:** ₹4,48,000 (~$4,707 USD) total prize pool
+```json
+{
+  "is_fraud": true,
+  "fraud_probability": 0.935,
+  "risk_score": 93,
+  "confidence": "high",
+  "top_features": {
+    "amount_deviation": 15.0,
+    "cross_border": 1,
+    "velocity_1h": 8
+  }
+}
+```
 
-## 📚 Documentation
+---
 
-- [PLAN.md](./PLAN.md) - Detailed implementation plan and milestones
-- [docs/walkthrough.pptx](./docs/walkthrough.pptx) - Solution presentation deck
-- [docs/architecture.md](./docs/architecture.md) - Technical architecture details
+## Security & Data Ethics
 
-## 🔒 Security & Compliance
+- **All data is synthetic** — no real cardholder data, PII, or production payment data is used
+- Fraud attack research is for **defensive purposes only**
+- No live systems or payment infrastructure are targeted
+- Complies with responsible AI and cybersecurity research practices
 
-- All data is synthetic, anonymized, or authorized sample data
-- No real cardholder data, PII, or production payment data
-- No targeting of live systems or payment infrastructure
-- Complies with responsible AI and cybersecurity practices
+---
 
-## 🤝 Contributing
-
-This project was developed for the Mastercard Innovation Challenge 2026. The codebase is open for reference and learning.
-
-## 📄 License
-
-MIT License - See LICENSE file for details
-
-## 👥 Team
+## Team
 
 - **Atharv Sawane** — Author
 - **Shashank Kalwa** — Co-owner
 
 ---
 
-**Built with ❤️ for the Mastercard Innovation Challenge 2026**
+## License
+
+MIT License — See [LICENSE](./LICENSE) for details.
+
+---
 
 *Karna Kavach — The impenetrable armor against payment fraud*

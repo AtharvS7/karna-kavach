@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 _PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA_PATH = _PROJECT_ROOT / "data" / "synthetic_transactions" / "transactions.csv"
 MODEL_PATH = _PROJECT_ROOT / "backend" / "models" / "fraud_classifier_v1.pkl"
+ENCODER_PATH = _PROJECT_ROOT / "backend" / "models" / "label_encoder_v1.pkl"
 METRICS_PATH = _PROJECT_ROOT / "backend" / "models" / "metrics.json"
 
 FEATURE_COLS = [
@@ -37,29 +38,40 @@ FEATURE_COLS = [
     "mcc", "merchant_category_enc",
 ]
 
+# Consistent MCC mapping (must match generate.py)
+MCC_MAP = {
+    "retail": 5411, "grocery": 5411, "gas_station": 5541,
+    "restaurant": 5812, "electronics": 5732, "travel": 4511,
+    "entertainment": 7922, "atm": 6011, "online": 5999, "pharmacy": 5912,
+}
 
-def _encode_df(df: pd.DataFrame) -> pd.DataFrame:
-    """Encode categorical columns; returns new DataFrame."""
+
+def _encode_df(df: pd.DataFrame) -> tuple[pd.DataFrame, LabelEncoder]:
+    """Encode categorical columns; returns (DataFrame, fitted LabelEncoder)."""
     out = df.copy()
     le = LabelEncoder()
     out["merchant_category_enc"] = le.fit_transform(out["merchant_category"].astype(str))
-    return out
+    return out, le
 
 
 class DefendEngine:
     def __init__(self):
         self.model: Optional[VotingClassifier] = None
+        self.label_encoder: Optional[LabelEncoder] = None
         self.metrics: Dict = {}
         MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-        # Load persisted model if available
+        # Load persisted model + encoder if available
         if MODEL_PATH.exists():
             with open(MODEL_PATH, "rb") as f:
                 self.model = pickle.load(f)
+            if ENCODER_PATH.exists():
+                with open(ENCODER_PATH, "rb") as f:
+                    self.label_encoder = pickle.load(f)
             if METRICS_PATH.exists():
                 with open(METRICS_PATH) as f:
                     self.metrics = json.load(f)
-            logger.info("Loaded persisted fraud classifier")
+            logger.info("Loaded persisted fraud classifier + label encoder")
 
     # ------------------------------------------------------------------ #
     #  Training                                                            #
@@ -73,7 +85,7 @@ class DefendEngine:
             )
 
         df = pd.read_csv(data_path)
-        df = _encode_df(df)
+        df, self.label_encoder = _encode_df(df)
 
         available = [c for c in FEATURE_COLS if c in df.columns]
         X = df[available].fillna(0)
@@ -139,6 +151,9 @@ class DefendEngine:
     def _persist(self):
         with open(MODEL_PATH, "wb") as f:
             pickle.dump(self.model, f)
+        if self.label_encoder is not None:
+            with open(ENCODER_PATH, "wb") as f:
+                pickle.dump(self.label_encoder, f)
         with open(METRICS_PATH, "w") as f:
             json.dump(self.metrics, f, indent=2)
 
@@ -173,11 +188,26 @@ class DefendEngine:
         }
 
     def _extract_features(self, t: Dict) -> List:
-        """Map a raw transaction dict to the model's feature vector."""
-        cat_map = {k: i for i, k in enumerate(
-            ["retail", "grocery", "gas_station", "restaurant",
-             "electronics", "travel", "entertainment", "atm", "online", "pharmacy"]
-        )}
+        """Map a raw transaction dict to the model's feature vector.
+
+        Uses the persisted LabelEncoder from training to ensure consistent
+        merchant_category_enc values between training and inference.
+        """
+        merchant_cat = t.get("merchant_category", "retail")
+
+        # Use persisted LabelEncoder for consistent encoding
+        if self.label_encoder is not None:
+            try:
+                cat_enc = float(self.label_encoder.transform([merchant_cat])[0])
+            except ValueError:
+                # Unknown category — use 0 as fallback
+                cat_enc = 0.0
+        else:
+            cat_enc = 0.0
+
+        # Derive MCC from merchant_category if not provided
+        mcc = float(t.get("mcc", MCC_MAP.get(merchant_cat, 5999)))
+
         return [
             float(t.get("amount", 0)),
             float(t.get("velocity_1h", 0)),
@@ -185,8 +215,8 @@ class DefendEngine:
             int(t.get("cross_border", False) or t.get("country", "US") != "US"),
             int(t.get("card_present", True)),
             float(t.get("txn_index", 0)),
-            float(t.get("mcc", 5999)),
-            float(cat_map.get(t.get("merchant_category", "retail"), 0)),
+            mcc,
+            cat_enc,
         ]
 
     @staticmethod

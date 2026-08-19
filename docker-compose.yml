@@ -20,8 +20,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: ../docker/Dockerfile.backend
+      context: .
+      dockerfile: docker/Dockerfile.backend
     ports:
       - "8000:8000"
     environment:
@@ -29,9 +29,6 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       GROQ_API_KEY: ${GROQ_API_KEY}
       DEBUG: "false"
-    volumes:
-      - ./data:/app/data
-      - ./backend/models:/app/backend/models
     depends_on:
       db:
         condition: service_healthy

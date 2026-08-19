@@ -22,7 +22,7 @@ class GenerateRequest(BaseModel):
 class TransactionResponse(BaseModel):
     """Transaction response schema."""
     transaction_id: str
-    card_number: str
+    card_id: str
     merchant_name: str
     merchant_category: str
     amount: float

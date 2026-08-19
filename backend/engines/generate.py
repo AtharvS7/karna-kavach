@@ -83,9 +83,14 @@ def _make_transaction(
             minutes=random.randint(0, 59)
         )
 
-    # Geography
+    # Geography: 10% of legit transactions are also international
     if features.get("geographic_anomaly") and is_fraud:
         country = random.choice(["NG", "RO", "UA", "PH", "BR", "VN"])
+        city = fake.city()
+        state = ""
+    elif not is_fraud and random.random() < 0.10:
+        # Legit international transactions prevent cross_border being a perfect separator
+        country = random.choice(["GB", "CA", "DE", "FR", "JP", "AU", "MX", "IN"])
         city = fake.city()
         state = ""
     else:
@@ -163,7 +168,7 @@ class GenerateEngine:
     def _add_engineered_features(self, rows: List[Dict]) -> List[Dict]:
         """
         Add velocity and deviation features that the ML model will learn from.
-        ponytail: simple look-back over sorted list; replace with pandas groupby
+        Uses simple look-back over sorted list; replace with pandas groupby
         when dataset grows beyond 100k rows.
         """
         by_card: Dict[str, List[Dict]] = {}
@@ -230,4 +235,12 @@ class GenerateEngine:
         attack_id: Optional[str] = None,
         db=None,
     ) -> List[Dict]:
-        return [await self.generate_single(attack_id) for _ in range(count)]
+        # Cache taxonomy for the batch instead of loading per-transaction
+        attack = None
+        if attack_id:
+            attacks = self._load_taxonomy()
+            attack = next((a for a in attacks if a["attack_id"] == attack_id), None)
+        return [
+            _make_transaction(is_fraud=attack is not None, attack=attack)
+            for _ in range(count)
+        ]

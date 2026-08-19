@@ -23,6 +23,8 @@ class PredictRequest(BaseModel):
     velocity_1h: int = 1
     amount_deviation: float = 0.0
     cross_border: bool = False
+    mcc: int = 5999
+    txn_index: int = 0
 
 
 class PredictResponse(BaseModel):

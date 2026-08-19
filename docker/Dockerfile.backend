@@ -7,10 +7,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc g++ libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python deps
+COPY backend/requirements.txt ./backend/requirements.txt
+RUN pip install --no-cache-dir -r backend/requirements.txt
 
-COPY . .
+# Copy project structure (preserving backend/ and data/ paths)
+COPY backend/ ./backend/
+COPY data/ ./data/
+
+WORKDIR /app/backend
 
 EXPOSE 8000
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]

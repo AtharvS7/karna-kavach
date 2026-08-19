@@ -56,5 +56,5 @@ class ModelMetric(Base):
     metric_value = Column(Float, nullable=False)
     dataset_type = Column(String(50), nullable=False)  # train, test, validation
     iteration = Column(Integer, default=0)
-    metadata = Column(JSON, nullable=True)
+    meta_data = Column("metadata", JSON, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

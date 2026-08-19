@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import asyncio
 import logging
 from typing import AsyncGenerator
 
@@ -26,11 +27,14 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     # Startup
     logger.info("Starting Karna Kavach API...")
 
-    # Create database tables
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Create database tables (if Postgres is available)
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database tables created/verified")
+    except Exception as e:
+        logger.warning(f"Database connection skipped ({e}) — running in fallback mode with JSON data")
 
-    logger.info("Database tables created/verified")
     logger.info("API server ready")
 
     yield
